@@ -194,7 +194,7 @@ size_flags/horizontal = 2
 size_flags/vertical = 2
 margin/left = 0.0
 margin/top = 0.0
-margin/right = 261.0
+margin/right = 294.0
 margin/bottom = 43.0
 custom_fonts/font = ExtResource( 6 )
 toggle_mode = false
@@ -227,7 +227,7 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="OptionsButton" type="Button" parent="VBoxContainer"]
+[node name="InstructionsButton" type="Button" parent="VBoxContainer"]
 
 focus/ignore_mouse = false
 focus/stop_mouse = true
@@ -235,8 +235,28 @@ size_flags/horizontal = 2
 size_flags/vertical = 2
 margin/left = 0.0
 margin/top = 47.0
-margin/right = 261.0
+margin/right = 294.0
 margin/bottom = 90.0
+custom_fonts/font = ExtResource( 6 )
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+text = "Instructions"
+flat = false
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="OptionsButton" type="Button" parent="VBoxContainer"]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 94.0
+margin/right = 294.0
+margin/bottom = 137.0
 custom_fonts/font = ExtResource( 6 )
 toggle_mode = false
 enabled_focus_mode = 2
@@ -264,26 +284,6 @@ enabled_focus_mode = 2
 shortcut = null
 text = "Full Screen"
 flat = false
-
-[node name="OptionsResolutionButton" type="MenuButton" parent="VBoxContainer"]
-
-visibility/visible = false
-focus/ignore_mouse = false
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 2
-margin/left = 0.0
-margin/top = 70.0
-margin/right = 203.0
-margin/bottom = 101.0
-custom_fonts/font = ExtResource( 6 )
-toggle_mode = false
-click_on_press = true
-enabled_focus_mode = 0
-shortcut = null
-text = "Resolution"
-flat = true
-items = [  ]
 
 [node name="OptionsMusicButton" type="Button" parent="VBoxContainer"]
 
@@ -321,6 +321,24 @@ shortcut = null
 text = "Sfx Volume"
 flat = false
 
+[node name="OptionsRemapButton" type="Button" parent="VBoxContainer"]
+
+visibility/visible = false
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 141.0
+margin/right = 294.0
+margin/bottom = 184.0
+custom_fonts/font = ExtResource( 6 )
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+text = "Remap Keys"
+flat = false
+
 [node name="OptionsReturnButton" type="Button" parent="VBoxContainer"]
 
 visibility/visible = false
@@ -346,9 +364,9 @@ focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 2
 margin/left = 0.0
-margin/top = 94.0
-margin/right = 261.0
-margin/bottom = 137.0
+margin/top = 141.0
+margin/right = 294.0
+margin/bottom = 184.0
 custom_fonts/font = ExtResource( 6 )
 toggle_mode = false
 enabled_focus_mode = 2
@@ -366,9 +384,9 @@ focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 2
 margin/left = 0.0
-margin/top = 141.0
-margin/right = 261.0
-margin/bottom = 184.0
+margin/top = 188.0
+margin/right = 294.0
+margin/bottom = 231.0
 custom_fonts/font = ExtResource( 6 )
 toggle_mode = false
 enabled_focus_mode = 2

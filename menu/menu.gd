@@ -6,9 +6,11 @@ onready var GameManager = get_node("/root/GameManager")
 onready var start_button = get_node("VBoxContainer/StartButton")
 onready var restart_button = get_node("VBoxContainer/RestartButton")
 onready var options_button = get_node("VBoxContainer/OptionsButton")
+onready var instructions_button = get_node("VBoxContainer/InstructionsButton")
 onready var options_fullscreen_button = get_node("VBoxContainer/OptionsFullScreenButton")
 onready var options_music_button = get_node("VBoxContainer/OptionsMusicButton")
 onready var options_sfx_button = get_node("VBoxContainer/OptionsSfxButton")
+onready var options_remap_button = get_node("VBoxContainer/OptionsRemapButton")
 onready var options_return_button = get_node("VBoxContainer/OptionsReturnButton")
 onready var credits_button = get_node("VBoxContainer/CreditsButton")
 onready var quit_button = get_node("VBoxContainer/QuitButton")
@@ -44,6 +46,7 @@ func _on_OptionsButton_pressed():
 	# hide menu
 	start_button.hide()
 	restart_button.hide()
+	instructions_button.hide()
 	options_button.hide()
 	credits_button.hide()
 	quit_button.hide()
@@ -51,6 +54,7 @@ func _on_OptionsButton_pressed():
 	options_fullscreen_button.show()
 	options_music_button.show()
 	options_sfx_button.show()
+	options_remap_button.show()
 	options_return_button.show()
 	update_options_buttons()
 	options_return_button.grab_focus()
@@ -60,12 +64,14 @@ func _on_OptionsReturnButton_pressed():
 	options_fullscreen_button.hide()
 	options_music_button.hide()
 	options_sfx_button.hide()
+	options_remap_button.hide()
 	options_return_button.hide()
 	# restore menu
 	if options_state_start:
 		start_button.show()
 	if options_state_restart:
 		restart_button.show()
+	instructions_button.show()
 	options_button.show()
 	if not get_tree().is_paused():
 		credits_button.show()
