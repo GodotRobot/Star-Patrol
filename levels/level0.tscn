@@ -1,13 +1,62 @@
-[gd_scene load_steps=5 format=1]
+[gd_scene load_steps=8 format=1]
 
 [ext_resource path="res://art/backgrounds/sky1.tex" type="Texture" id=1]
 [ext_resource path="res://auxiliary/tileset.xml" type="TileSet" id=2]
 [ext_resource path="res://icon.png" type="Texture" id=3]
+[ext_resource path="res://fonts/radiostars20.tres" type="DynamicFont" id=4]
+[ext_resource path="res://fonts/radiostars30.tres" type="DynamicFont" id=5]
 
 [sub_resource type="RectangleShape2D" id=1]
 
 custom_solver_bias = 0.0
 extents = Vector2( 10, 10 )
+
+[sub_resource type="GDScript" id=2]
+
+script/source = "extends RigidBody2D
+
+onready var up_map_button = get_node(\"Keymap/UpMapButton\")
+onready var up_mapping = get_node(\"Keymap/UpMapping\")
+onready var up_mapping_text = up_mapping.get_text()
+
+func _ready():
+	set_fixed_process(true)
+	
+func _fixed_process(delta):
+	if Input.is_action_pressed(\"ui_right\"):
+		apply_impulse(Vector2(0, -10), Vector2(5, 0))
+	if Input.is_action_pressed(\"ui_left\"):
+		apply_impulse(Vector2(0, -10), Vector2(-5, 0))
+	if Input.is_action_pressed(\"ui_up\"):
+		apply_impulse(Vector2(0, 0), Vector2(0, -5))
+
+func _on_UpMapButton_pressed():
+	up_mapping.set_text(\"press\")
+	set_process_input(true)
+
+# will be called only during action capture (remapping)
+func _input(event):
+	if event.type == InputEvent.MOUSE_MOTION:
+		return
+	if event.type == InputEvent.MOUSE_BUTTON:
+		set_process_input(false)
+		up_mapping.set_text(up_mapping_text)
+		return
+	if event.type == InputEvent.KEY:
+		up_mapping_text = OS.get_scancode_string(event.scancode)
+	if event.type == InputEvent.JOYSTICK_MOTION:
+		var val = '+'
+		if event.value < 0:
+			val = '-'
+		up_mapping_text = 'joy axis ' + val + str(event.axis)
+	if event.type == InputEvent.JOYSTICK_BUTTON:
+		up_mapping_text = 'joy button ' + str(event.button_index)
+	up_mapping.set_text(up_mapping_text)
+	InputMap.erase_action('ui_up')
+	InputMap.add_action('ui_up')
+	InputMap.action_add_event('ui_up', event)
+	set_process_input(false)
+"
 
 [node name="Level0" type="Node2D"]
 
@@ -25,6 +74,7 @@ texture = ExtResource( 1 )
 
 [node name="TileMap" type="TileMap" parent="CanvasLayer"]
 
+transform/pos = Vector2( -29.765, -0.647064 )
 mode = 0
 tile_set = ExtResource( 2 )
 cell/size = Vector2( 70, 70 )
@@ -140,5 +190,142 @@ _update_shape_index = 0
 __meta__ = {
 "_edit_lock_": true
 }
+
+[node name="player" type="RigidBody2D" parent="CanvasLayer"]
+
+transform/pos = Vector2( 301.002, 524.841 )
+input/pickable = false
+shapes/0/shape = SubResource( 1 )
+shapes/0/transform = Matrix32( 3.21958, 0, 0, 3.21958, 0.094517, 0.207562 )
+shapes/0/trigger = false
+collision/layers = 1
+collision/mask = 1
+mode = 0
+mass = 1.0
+friction = 0.0
+bounce = 0.0
+gravity_scale = 1.0
+custom_integrator = false
+continuous_cd = 0
+contacts_reported = 0
+contact_monitor = false
+sleeping = false
+can_sleep = true
+velocity/linear = Vector2( 0, 0 )
+velocity/angular = 0.0
+damp_override/linear = -1.0
+damp_override/angular = -1.0
+script/script = SubResource( 2 )
+
+[node name="Sprite" type="Sprite" parent="CanvasLayer/player"]
+
+texture = ExtResource( 3 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CanvasLayer/player"]
+
+transform/pos = Vector2( 0.094517, 0.207562 )
+transform/scale = Vector2( 3.21958, 3.21958 )
+shape = SubResource( 1 )
+trigger = false
+_update_shape_index = 0
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Keymap" type="HBoxContainer" parent="CanvasLayer/player"]
+
+focus/ignore_mouse = false
+focus/stop_mouse = false
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 40.0
+margin/top = 0.0
+margin/right = 242.0
+margin/bottom = 20.0
+alignment = 0
+
+[node name="UpMapButton" type="Button" parent="CanvasLayer/player/Keymap"]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 30.0
+margin/bottom = 20.0
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+text = "Up"
+flat = false
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="UpMapping" type="Label" parent="CanvasLayer/player/Keymap"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 34.0
+margin/top = 3.0
+margin/right = 91.0
+margin/bottom = 17.0
+custom_constants/shadow_offset_x = 3
+custom_constants/shadow_offset_y = 3
+text = "Up arrow"
+align = 1
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Label" type="Label" parent="CanvasLayer"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 69.0
+margin/top = 112.0
+margin/right = 1177.0
+margin/bottom = 137.0
+custom_fonts/font = ExtResource( 4 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 1
+custom_constants/shadow_offset_y = 1
+text = "this is a playground level by Lior - will be completely deleted on release"
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="Label1" type="Label" parent="CanvasLayer"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 69.0
+margin/top = 73.0
+margin/right = 1177.0
+margin/bottom = 110.0
+custom_fonts/font = ExtResource( 5 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 3
+custom_constants/shadow_offset_y = 3
+text = "LEVEL 0"
+align = 1
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[connection signal="pressed" from="CanvasLayer/player/Keymap/UpMapButton" to="CanvasLayer/player" method="_on_UpMapButton_pressed"]
 
 
