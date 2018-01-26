@@ -93,6 +93,7 @@ tile_data = IntArray( 524288, 0, 524289, 0, 524290, 3, 524291, 2, 524292, 0, 524
 
 [node name="RigidBody2D" type="RigidBody2D" parent="CanvasLayer"]
 
+editor/display_folded = true
 transform/pos = Vector2( 498.053, 432.761 )
 input/pickable = false
 shapes/0/shape = SubResource( 1 )
