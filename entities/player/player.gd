@@ -4,18 +4,18 @@ extends RigidBody2D
 const MAX_SPEED = 200
 const MIN_SPEED = 50
 
-# the default movement vector, when the user isn't pressing left or right
+# the default starting movement vector
 const DEFAULT_VELOCITY = Vector2(100, 0)
 
 # velocity factors for each direction, applied when the user presses left/right
 const DIRECTION_VELOCITY_FACTOR = {
-	FORWARD = Vector2(50, 0),
-	BACKWARDS = Vector2(-50, 0),
+	FORWARD = Vector2(80, 0),
+	BACKWARDS = Vector2(-80, 0),
 	UP = Vector2(0, 1),
 	DOWN = Vector2(0, -1)
 }
 
-# the current linear movement vector
+# the current movement acceleration vector
 var current_acceleration_velocity = Vector2()
 
 func _ready():
@@ -30,7 +30,7 @@ func _fixed_process(delta):
 	
 	# making sure the user isn't oer the speed limit
 	clamp_speed()
-	#print("speed =" + String(current_acceleration_velocity.x))
+	#print("speed = " + String(current_acceleration_velocity.x))
 
 func _integrate_forces(state):
 	# get the current linear velocity from the physics engine
