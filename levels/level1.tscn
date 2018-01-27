@@ -19,6 +19,7 @@ __meta__ = {
 [node name="Player" parent="." instance=ExtResource( 1 )]
 
 transform/pos = Vector2( 623.848, 606.153 )
+mass = 20.0
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 
@@ -136,7 +137,9 @@ centered = false
 region = true
 region_rect = Rect2( 0, 0, 1280, 720 )
 
-[node name="TileMap32x32" type="TileMap" parent="."]
+[node name="TileMap32x32" type="TileMap" parent="." groups=[
+"ground",
+]]
 
 mode = 0
 tile_set = ExtResource( 8 )
@@ -157,7 +160,9 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="TileMap64x64" type="TileMap" parent="."]
+[node name="TileMap64x64" type="TileMap" parent="." groups=[
+"ground",
+]]
 
 mode = 0
 tile_set = ExtResource( 9 )
