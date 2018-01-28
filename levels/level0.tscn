@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=1]
+[gd_scene load_steps=9 format=1]
 
 [ext_resource path="res://art/backgrounds/sky1.tex" type="Texture" id=1]
 [ext_resource path="res://auxiliary/tileset.xml" type="TileSet" id=2]
@@ -13,49 +13,138 @@ extents = Vector2( 10, 10 )
 
 [sub_resource type="GDScript" id=2]
 
-script/source = "extends RigidBody2D
+script/source = "extends VBoxContainer
 
-onready var up_map_button = get_node(\"Keymap/UpMapButton\")
-onready var up_mapping = get_node(\"Keymap/UpMapping\")
-onready var up_mapping_text = up_mapping.get_text()
+var ongoing = null
 
-func _ready():
-	set_fixed_process(true)
+class Action:
+	var name = String()
+	var evtkey
+	var evtjoy
+	var button
+	var label
+var actions_ = Array()
+
+func event_str(action):
+	var s = ''
+	if action.evtkey != null:
+		s += input_event_str(action.evtkey)
+		if action.evtjoy:
+			s += ' or '
+	if action.evtjoy:
+		s += input_event_str(action.evtjoy)
+	return s
+
+func input_event_str(evt):
+	var s = ''
+	if evt.type == InputEvent.KEY:
+		s = OS.get_scancode_string(evt.scancode)
+	elif evt.type == InputEvent.JOYSTICK_BUTTON:
+		s = 'JOY' + str(evt.device) + ' ' + str(evt.button_index)
+	elif evt.type == InputEvent.JOYSTICK_MOTION:
+		var val = '+' + str(evt.axis)
+		if evt.value < 0:
+			val = '-' + str(evt.axis)
+		s = 'JOY' + str(evt.device) + ' axis ' + val
+	else:
+		s = 'unknown'
+	return s
+
+func filter_key_event(events):
+	for e in events:
+		if e.type == InputEvent.KEY:
+			return e
+	return null
+
+func filter_joy_event(events):
+	for e in events:
+		if e.type == InputEvent.JOYSTICK_BUTTON or e.type == InputEvent.JOYSTICK_MOTION:
+			return e
+	return null
 	
-func _fixed_process(delta):
-	if Input.is_action_pressed(\"ui_right\"):
-		apply_impulse(Vector2(0, -10), Vector2(5, 0))
-	if Input.is_action_pressed(\"ui_left\"):
-		apply_impulse(Vector2(0, -10), Vector2(-5, 0))
-	if Input.is_action_pressed(\"ui_up\"):
-		apply_impulse(Vector2(0, 0), Vector2(0, -5))
+func init_actions():
+	# only go over event the the designer has put in the editor
+	for c in get_children():
+		var n = Action.new()
+		n.name = c.get_name()
+		n.evtkey = filter_key_event(InputMap.get_action_list(n.name))
+		n.evtjoy = filter_joy_event(InputMap.get_action_list(n.name))
+		n.button = c.get_node(\"MapButton\")
+		n.button.set_text(n.name)
+		n.label = c.get_node(\"Mapping\")
+		n.label.set_text(event_str(n))
+		actions_.append(n)
 
-func _on_UpMapButton_pressed():
-	up_mapping.set_text(\"press\")
+func print_actions():
+	for a in actions_:
+		print(a.name)
+		print(event_str(a))
+		
+func _ready():
+	init_actions()
+	print_actions()
+	for a in actions_:
+		a.button.connect(\"pressed\", self, \"_some_button_pressed\", [a.button])
+
+func get_action_by_name(name):
+	for a in actions_:
+		if a.name == name:
+			return a
+	return null
+	
+func _some_button_pressed(button):
+	var name = button.get_text()
+	print('mapping ' + name + '...')
+	ongoing = get_action_by_name(name)
+	var txt = button.get_parent().get_node(\"Mapping\")
+	txt.set_text(\"press new key\")
 	set_process_input(true)
 
 # will be called only during action capture (remapping)
 func _input(event):
 	if event.type == InputEvent.MOUSE_MOTION:
+		# ignore and wait for next event
 		return
 	if event.type == InputEvent.MOUSE_BUTTON:
+		# cancel mapping
 		set_process_input(false)
-		up_mapping.set_text(up_mapping_text)
+		ongoing.label.set_text(event_str(ongoing))
+		ongoing = null
 		return
 	if event.type == InputEvent.KEY:
-		up_mapping_text = OS.get_scancode_string(event.scancode)
-	if event.type == InputEvent.JOYSTICK_MOTION:
-		var val = '+'
-		if event.value < 0:
-			val = '-'
-		up_mapping_text = 'joy axis ' + val + str(event.axis)
-	if event.type == InputEvent.JOYSTICK_BUTTON:
-		up_mapping_text = 'joy button ' + str(event.button_index)
-	up_mapping.set_text(up_mapping_text)
-	InputMap.erase_action('ui_up')
-	InputMap.add_action('ui_up')
-	InputMap.action_add_event('ui_up', event)
+		ongoing.evtkey = event
+	if event.type == InputEvent.JOYSTICK_MOTION or event.type == InputEvent.JOYSTICK_BUTTON:
+		ongoing.evtjoy = event
+		
+	InputMap.erase_action(ongoing.name)
+	InputMap.add_action(ongoing.name)
+	if ongoing.evtkey != null:
+		InputMap.action_add_event(ongoing.name, ongoing.evtkey)
+	if ongoing.evtjoy != null:
+		InputMap.action_add_event(ongoing.name, ongoing.evtjoy)
+	ongoing.label.set_text(event_str(ongoing))
 	set_process_input(false)
+	ongoing = null
+
+
+"
+
+[sub_resource type="GDScript" id=3]
+
+script/source = "extends RigidBody2D
+
+func _ready():
+	set_fixed_process(true)
+	
+func _fixed_process(delta):
+	if Input.is_action_pressed(\"speedup\"):
+		apply_impulse(Vector2(0, -10), Vector2(5, 0))
+	if Input.is_action_pressed(\"slowdown\"):
+		apply_impulse(Vector2(0, -10), Vector2(-5, 0))
+	if Input.is_action_pressed(\"jump\"):
+		apply_impulse(Vector2(0, 0), Vector2(0, -5))
+	if Input.is_action_pressed(\"fire\"):
+		apply_impulse(Vector2(0, 0), Vector2(0, 5))
 "
 
 [node name="Level0" type="Node2D"]
@@ -192,6 +281,239 @@ __meta__ = {
 "_edit_lock_": true
 }
 
+[node name="Keymap" type="VBoxContainer" parent="CanvasLayer"]
+
+focus/ignore_mouse = false
+focus/stop_mouse = false
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 918.0
+margin/top = 334.0
+margin/right = 1009.0
+margin/bottom = 378.0
+alignment = 0
+script/script = SubResource( 2 )
+
+[node name="speedup" type="HBoxContainer" parent="CanvasLayer/Keymap"]
+
+focus/ignore_mouse = false
+focus/stop_mouse = false
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 110.0
+margin/bottom = 20.0
+alignment = 0
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="MapButton" type="Button" parent="CanvasLayer/Keymap/speedup"]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 51.0
+margin/bottom = 20.0
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+text = "action"
+flat = false
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Mapping" type="Label" parent="CanvasLayer/Keymap/speedup"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 55.0
+margin/top = 3.0
+margin/right = 110.0
+margin/bottom = 17.0
+custom_constants/shadow_offset_x = 3
+custom_constants/shadow_offset_y = 3
+text = "mapping"
+align = 1
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="slowdown" type="HBoxContainer" parent="CanvasLayer/Keymap"]
+
+focus/ignore_mouse = false
+focus/stop_mouse = false
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 24.0
+margin/right = 110.0
+margin/bottom = 44.0
+alignment = 0
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="MapButton" type="Button" parent="CanvasLayer/Keymap/slowdown"]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 51.0
+margin/bottom = 20.0
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+text = "action"
+flat = false
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Mapping" type="Label" parent="CanvasLayer/Keymap/slowdown"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 55.0
+margin/top = 3.0
+margin/right = 110.0
+margin/bottom = 17.0
+custom_constants/shadow_offset_x = 3
+custom_constants/shadow_offset_y = 3
+text = "mapping"
+align = 1
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="jump" type="HBoxContainer" parent="CanvasLayer/Keymap"]
+
+focus/ignore_mouse = false
+focus/stop_mouse = false
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 48.0
+margin/right = 110.0
+margin/bottom = 68.0
+alignment = 0
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="MapButton" type="Button" parent="CanvasLayer/Keymap/jump"]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 51.0
+margin/bottom = 20.0
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+text = "action"
+flat = false
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Mapping" type="Label" parent="CanvasLayer/Keymap/jump"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 55.0
+margin/top = 3.0
+margin/right = 110.0
+margin/bottom = 17.0
+custom_constants/shadow_offset_x = 3
+custom_constants/shadow_offset_y = 3
+text = "mapping"
+align = 1
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="fire" type="HBoxContainer" parent="CanvasLayer/Keymap"]
+
+focus/ignore_mouse = false
+focus/stop_mouse = false
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 72.0
+margin/right = 110.0
+margin/bottom = 92.0
+alignment = 0
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="MapButton" type="Button" parent="CanvasLayer/Keymap/fire"]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 51.0
+margin/bottom = 20.0
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+text = "action"
+flat = false
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Mapping" type="Label" parent="CanvasLayer/Keymap/fire"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 55.0
+margin/top = 3.0
+margin/right = 110.0
+margin/bottom = 17.0
+custom_constants/shadow_offset_x = 3
+custom_constants/shadow_offset_y = 3
+text = "mapping"
+align = 1
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+__meta__ = {
+"_edit_lock_": true
+}
+
 [node name="player" type="RigidBody2D" parent="CanvasLayer"]
 
 transform/pos = Vector2( 301.002, 524.841 )
@@ -216,7 +538,7 @@ velocity/linear = Vector2( 0, 0 )
 velocity/angular = 0.0
 damp_override/linear = -1.0
 damp_override/angular = -1.0
-script/script = SubResource( 2 )
+script/script = SubResource( 3 )
 
 [node name="Sprite" type="Sprite" parent="CanvasLayer/player"]
 
@@ -232,58 +554,6 @@ transform/scale = Vector2( 3.21958, 3.21958 )
 shape = SubResource( 1 )
 trigger = false
 _update_shape_index = 0
-__meta__ = {
-"_edit_lock_": true
-}
-
-[node name="Keymap" type="HBoxContainer" parent="CanvasLayer/player"]
-
-focus/ignore_mouse = false
-focus/stop_mouse = false
-size_flags/horizontal = 2
-size_flags/vertical = 2
-margin/left = 40.0
-margin/top = 0.0
-margin/right = 242.0
-margin/bottom = 20.0
-alignment = 0
-
-[node name="UpMapButton" type="Button" parent="CanvasLayer/player/Keymap"]
-
-focus/ignore_mouse = false
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 2
-margin/left = 0.0
-margin/top = 0.0
-margin/right = 30.0
-margin/bottom = 20.0
-toggle_mode = false
-enabled_focus_mode = 2
-shortcut = null
-text = "Up"
-flat = false
-__meta__ = {
-"_edit_lock_": true
-}
-
-[node name="UpMapping" type="Label" parent="CanvasLayer/player/Keymap"]
-
-focus/ignore_mouse = true
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 0
-margin/left = 34.0
-margin/top = 3.0
-margin/right = 91.0
-margin/bottom = 17.0
-custom_constants/shadow_offset_x = 3
-custom_constants/shadow_offset_y = 3
-text = "Up arrow"
-align = 1
-percent_visible = 1.0
-lines_skipped = 0
-max_lines_visible = -1
 __meta__ = {
 "_edit_lock_": true
 }
@@ -326,7 +596,5 @@ align = 1
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
-
-[connection signal="pressed" from="CanvasLayer/player/Keymap/UpMapButton" to="CanvasLayer/player" method="_on_UpMapButton_pressed"]
 
 
