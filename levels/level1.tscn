@@ -1,0 +1,186 @@
+[gd_scene load_steps=10 format=1]
+
+[ext_resource path="res://entities/player/player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://art/backgrounds/stars1.tex" type="Texture" id=2]
+[ext_resource path="res://art/backgrounds/mountains1.tex" type="Texture" id=3]
+[ext_resource path="res://art/backgrounds/clouds1.tex" type="Texture" id=4]
+[ext_resource path="res://art/backgrounds/background0.tex" type="Texture" id=5]
+[ext_resource path="res://art/backgrounds/background1.tex" type="Texture" id=6]
+[ext_resource path="res://art/backgrounds/background2.tex" type="Texture" id=7]
+[ext_resource path="res://auxiliary/tileset32x32.xml" type="TileSet" id=8]
+[ext_resource path="res://auxiliary/tileset64x64.xml" type="TileSet" id=9]
+
+[node name="Root" type="Node2D"]
+
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Player" parent="." instance=ExtResource( 1 )]
+
+transform/pos = Vector2( 623.848, 606.153 )
+mass = 20.0
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+
+editor/display_folded = true
+layer = -1
+offset = Vector2( 0, 0 )
+rotation = 0.0
+scale = Vector2( 1, 1 )
+scroll/offset = Vector2( 0, 0 )
+scroll/base_offset = Vector2( 0, 0 )
+scroll/base_scale = Vector2( 1, 1 )
+scroll/limit_begin = Vector2( 0, 0 )
+scroll/limit_end = Vector2( 0, 0 )
+scroll/ignore_camera_zoom = false
+
+[node name="StaticLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+
+editor/display_folded = true
+motion/scale = Vector2( 0, 0 )
+motion/offset = Vector2( 0, 0 )
+motion/mirroring = Vector2( 0, 0 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Sprite" type="Sprite" parent="ParallaxBackground/StaticLayer"]
+
+texture = ExtResource( 2 )
+centered = false
+region = true
+region_rect = Rect2( 0, 0, 1280, 720 )
+
+[node name="ParallaxLayer0" type="ParallaxLayer" parent="ParallaxBackground"]
+
+editor/display_folded = true
+motion/scale = Vector2( 0.1, 1 )
+motion/offset = Vector2( 0, 0 )
+motion/mirroring = Vector2( 1280, 0 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer0"]
+
+texture = ExtResource( 3 )
+centered = false
+region = true
+region_rect = Rect2( 0, 0, 1280, 720 )
+
+[node name="ParallaxLayer1" type="ParallaxLayer" parent="ParallaxBackground"]
+
+editor/display_folded = true
+motion/scale = Vector2( 0.15, 1 )
+motion/offset = Vector2( 0, 0 )
+motion/mirroring = Vector2( 1280, 0 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer1"]
+
+texture = ExtResource( 4 )
+centered = false
+region = true
+region_rect = Rect2( 0, 0, 1280, 720 )
+
+[node name="ParallaxLayer2" type="ParallaxLayer" parent="ParallaxBackground"]
+
+editor/display_folded = true
+motion/scale = Vector2( 0.4, 1 )
+motion/offset = Vector2( 0, 0 )
+motion/mirroring = Vector2( 1280, 0 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer2"]
+
+texture = ExtResource( 5 )
+centered = false
+region = true
+region_rect = Rect2( 0, 0, 1280, 720 )
+
+[node name="ParallaxLayer3" type="ParallaxLayer" parent="ParallaxBackground"]
+
+editor/display_folded = true
+motion/scale = Vector2( 0.6, 1 )
+motion/offset = Vector2( 0, 0 )
+motion/mirroring = Vector2( 1280, 0 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer3"]
+
+texture = ExtResource( 6 )
+centered = false
+region = true
+region_rect = Rect2( 0, 0, 1280, 720 )
+
+[node name="ParallaxLayer4" type="ParallaxLayer" parent="ParallaxBackground"]
+
+editor/display_folded = true
+motion/scale = Vector2( 1, 1 )
+motion/offset = Vector2( 0, 0 )
+motion/mirroring = Vector2( 1280, 0 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer4"]
+
+texture = ExtResource( 7 )
+centered = false
+region = true
+region_rect = Rect2( 0, 0, 1280, 720 )
+
+[node name="TileMap32x32" type="TileMap" parent="." groups=[
+"ground",
+]]
+
+mode = 0
+tile_set = ExtResource( 8 )
+cell/size = Vector2( 32, 32 )
+cell/quadrant_size = 16
+cell/custom_transform = Matrix32( 1, 0, 0, 1, 0, 0 )
+cell/half_offset = 2
+cell/tile_origin = 0
+cell/y_sort = false
+collision/use_kinematic = false
+collision/friction = 1.0
+collision/bounce = 0.0
+collision/layers = 1
+collision/mask = 1
+occluder/light_mask = 1
+tile_data = IntArray( 1310720, 4, 1310722, 5, 1310724, 2, 1310726, 5, 1310728, 2, 1310730, 3, 1310732, 0, 1310734, 0, 1310736, 4, 1310738, 2, 1310740, 5, 1310742, 0, 1310744, 4, 1310746, 5, 1310748, 2, 1310750, 5, 1310752, 0, 1310754, 0, 1310756, 0, 1310758, 0, 1310760, 0, 1310762, 0, 1310764, 0, 1310766, 0, 1310768, 0, 1310770, 4, 1310778, 3, 1310780, 4, 1310782, 5, 1310784, 2, 1310786, 5, 1310788, 2, 1310790, 5, 1310792, 0, 1310794, 0, 1310796, 0, 1310798, 0, 1310806, 2, 1310808, 3, 1310810, 0, 1310811, 0, 1310812, 0, 1310813, 0, 1310814, 0, 1310815, 0, 1310816, 0, 1310817, 0, 1310818, 0, 1310819, 0, 1310820, 0, 1310821, 0, 1310822, 0, 1310830, 3, 1310832, 0, 1310833, 0, 1310834, 0, 1310835, 0, 1310836, 0, 1310837, 0, 1310839, 4, 1310840, 5, 1310850, 2, 1310852, 5, 1310854, 0, 1310856, 0, 1310858, 0, 1310860, 0, 1310862, 0, 1310864, 4, 1310866, 5, 1310868, 2, 1310870, 5, 1310872, 0, 1310874, 0, 1310876, 0, 1310878, 0, 1310880, 0, 1310882, 0, 1310884, 0, 1310886, 0, 1310888, 0, 1310890, 0, 1310892, 0, 1310894, 0, 1376256, 1, 1376258, 1, 1376260, 1, 1376262, 1, 1376264, 1, 1376266, 1, 1376268, 1, 1376270, 1, 1376272, 1, 1376274, 1, 1376276, 1, 1376278, 1, 1376280, 1, 1376282, 1, 1376284, 1, 1376286, 1, 1376288, 1, 1376290, 1, 1376292, 1, 1376294, 1, 1376296, 1, 1376298, 1, 1376300, 1, 1376302, 1, 1376304, 1, 1376306, 1, 1376310, 0, 1376314, 1, 1376316, 1, 1376317, 1, 1376318, 1, 1376319, 1, 1376320, 1, 1376321, 1, 1376322, 1, 1376323, 1, 1376324, 1, 1376325, 1, 1376326, 1, 1376327, 1, 1376328, 1, 1376329, 1, 1376330, 1, 1376331, 1, 1376332, 1, 1376333, 1, 1376334, 1, 1376338, 4, 1376342, 1, 1376344, 1, 1376346, 1, 1376348, 1, 1376350, 1, 1376352, 1, 1376354, 1, 1376356, 1, 1376358, 1, 1376362, 0, 1376366, 1, 1376368, 1, 1376370, 1, 1376372, 1, 1376374, 1, 1376376, 1, 1376380, 0, 1376382, 0, 1376386, 1, 1376388, 1, 1376390, 1, 1376392, 1, 1376394, 1, 1376396, 1, 1376398, 1, 1376400, 1, 1376402, 1, 1376404, 1, 1376406, 1, 1376408, 1, 1376410, 1, 1376412, 1, 1376414, 1, 1376416, 1, 1376418, 1, 1376420, 1, 1376422, 1, 1376424, 1, 1376426, 1, 1376428, 1, 1376430, 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="TileMap64x64" type="TileMap" parent="." groups=[
+"ground",
+]]
+
+mode = 0
+tile_set = ExtResource( 9 )
+cell/size = Vector2( 64, 64 )
+cell/quadrant_size = 16
+cell/custom_transform = Matrix32( 1, 0, 0, 1, 0, 0 )
+cell/half_offset = 2
+cell/tile_origin = 0
+cell/y_sort = false
+collision/use_kinematic = false
+collision/friction = 1.0
+collision/bounce = 0.0
+collision/layers = 1
+collision/mask = 1
+occluder/light_mask = 1
+tile_data = IntArray( 655386, 3, 655388, 4, 655400, 3, 655402, 4, 655412, 3, 655414, 4, 655421, 3, 655424, 4, 720896, 0, 720897, 0, 720898, 0, 720899, 0, 720900, 0, 720901, 0, 720902, 0, 720903, 0, 720904, 0, 720905, 0, 720906, 0, 720907, 0, 720908, 0, 720909, 0, 720910, 0, 720911, 0, 720912, 0, 720913, 0, 720914, 0, 720915, 0, 720916, 0, 720917, 0, 720918, 0, 720919, 0, 720920, 0, 720921, 0, 720922, 5, 720923, 5, 720924, 5, 720925, 5, 720926, 5, 720927, 5, 720928, 5, 720929, 5, 720930, 5, 720931, 5, 720932, 5, 720933, 5, 720934, 5, 720935, 5, 720936, 5, 720937, 5, 720938, 5, 720939, 5, 720940, 5, 720941, 5, 720942, 5, 720943, 5, 720944, 5, 720945, 5, 720946, 5, 720947, 5, 720948, 5, 720949, 5, 720950, 5, 720951, 5, 720952, 5, 720953, 5, 720954, 5, 720955, 5, 720956, 5, 720957, 5, 720958, 5, 720959, 5, 720960, 5, 720961, 5, 720962, 5, 720963, 5, 720964, 5, 720965, 5, 720966, 5, 720967, 5, 720968, 5, 720969, 5, 720970, 5, 720971, 5, 720972, 5, 720973, 5, 720974, 5, 720975, 5, 720976, 5, 720977, 5, 720978, 5, 720979, 5, 720980, 5, 720981, 5, 720982, 5, 720983, 5 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+
