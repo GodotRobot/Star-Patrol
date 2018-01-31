@@ -29,9 +29,9 @@ func event_str(action):
 	var s = ''
 	if action.evtkey != null:
 		s += input_event_str(action.evtkey)
-		if action.evtjoy:
+		if action.evtjoy != null:
 			s += ' or '
-	if action.evtjoy:
+	if action.evtjoy != null:
 		s += input_event_str(action.evtjoy)
 	return s
 
@@ -105,12 +105,14 @@ func _input(event):
 	if event.type == InputEvent.MOUSE_MOTION:
 		# ignore and wait for next event
 		return
-	if event.type == InputEvent.MOUSE_BUTTON:
+	if (event.type == InputEvent.KEY and event.is_action_pressed(\"ui_cancel\")) or \\
+		(event.type == InputEvent.MOUSE_BUTTON):
 		# cancel mapping
 		set_process_input(false)
 		ongoing.label.set_text(event_str(ongoing))
 		ongoing = null
 		return
+		
 	if event.type == InputEvent.KEY:
 		ongoing.evtkey = event
 	if event.type == InputEvent.JOYSTICK_MOTION or event.type == InputEvent.JOYSTICK_BUTTON:
@@ -125,8 +127,6 @@ func _input(event):
 	ongoing.label.set_text(event_str(ongoing))
 	set_process_input(false)
 	ongoing = null
-
-
 "
 
 [sub_resource type="GDScript" id=3]

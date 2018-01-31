@@ -1,25 +1,32 @@
 extends CanvasLayer
 
-onready var GameManager = get_node("/root/GameManager")
-
 # buttons
-onready var start_button = get_node("VBoxContainer/StartButton")
-onready var restart_button = get_node("VBoxContainer/RestartButton")
-onready var options_button = get_node("VBoxContainer/OptionsButton")
-onready var instructions_button = get_node("VBoxContainer/InstructionsButton")
-onready var options_fullscreen_button = get_node("VBoxContainer/OptionsFullScreenButton")
-onready var options_music_button = get_node("VBoxContainer/OptionsMusicButton")
-onready var options_sfx_button = get_node("VBoxContainer/OptionsSfxButton")
-onready var options_remap_button = get_node("VBoxContainer/OptionsRemapButton")
-onready var options_return_button = get_node("VBoxContainer/OptionsReturnButton")
-onready var credits_button = get_node("VBoxContainer/CreditsButton")
-onready var quit_button = get_node("VBoxContainer/QuitButton")
-
-var options_state_start = false
-var options_state_restart = false
+onready var start_button = get_node("Menu/StartButton")
+onready var restart_button = get_node("Menu/RestartButton")
+onready var options_button = get_node("Menu/OptionsButton")
+onready var instructions_button = get_node("Menu/InstructionsButton")
+onready var options_fullscreen_button = get_node("Menu/OptionsFullScreenButton")
+onready var options_music_button = get_node("Menu/OptionsMusicButton")
+onready var options_sfx_button = get_node("Menu/OptionsSfxButton")
+onready var options_remap_button = get_node("Menu/OptionsRemapButton")
+onready var options_remap_keymap = get_node("Menu/Keymap")
+onready var options_remap_return_button = get_node("Menu/OptionsRemapReturnButton")
+onready var options_return_button = get_node("Menu/OptionsReturnButton")
+onready var credits_button = get_node("Menu/CreditsButton")
+onready var quit_button = get_node("Menu/QuitButton")
 
 func _ready():
-	pass
+	set_process_input(true)
+
+func _input(event):
+	if event.is_action_pressed("ui_cancel"):
+		if quit_button.is_visible():
+			GameManager.quit_game()
+		elif options_return_button.is_visible():
+			show_start_menu()
+		elif options_remap_return_button.is_visible():
+			if options_remap_keymap.cancel():
+				show_options_menu()
 
 func _on_StartButton_pressed():
 	GameManager.start_game()
@@ -34,23 +41,29 @@ func update_options_buttons():
 #	else:
 #		options_fullscreen_button.set_text("Go Full Screen")
 
+func hide_all_buttons():
+	options_remap_keymap.hide()
+	for c in get_node("Menu").get_children():
+		if c extends Button:
+			c.hide()
 
-func _on_OptionsButton_pressed():
-	# store menu
-	options_state_start = false
-	if start_button.is_visible():
-		options_state_start = true
-	options_state_restart = false
-	if restart_button.is_visible():
-		options_state_restart = true
-	# hide menu
-	start_button.hide()
-	restart_button.hide()
-	instructions_button.hide()
-	options_button.hide()
-	credits_button.hide()
-	quit_button.hide()
-	# show options
+func show_start_menu():
+	hide_all_buttons()
+	if GameManager.current_state == GameManager.GAME_STATES.START_MENU:
+		start_button.show()
+		start_button.grab_focus()
+	else:
+		restart_button.show()
+		restart_button.grab_focus()
+	instructions_button.show()
+	options_button.show()
+	if not get_tree().is_paused():
+		credits_button.show()
+	credits_button.show()
+	quit_button.show()
+	
+func show_options_menu():
+	hide_all_buttons()
 	options_fullscreen_button.show()
 	options_music_button.show()
 	options_sfx_button.show()
@@ -59,25 +72,25 @@ func _on_OptionsButton_pressed():
 	update_options_buttons()
 	options_return_button.grab_focus()
 
+func show_options_remap_menu():
+	hide_all_buttons()
+	options_remap_keymap.show()
+	options_remap_return_button.show()
+	options_remap_return_button.grab_focus()
+	
+# button press signal handlers
+
+func _on_OptionsButton_pressed():
+	show_options_menu()
+
+func _on_OptionsRemapButton_pressed():
+	show_options_remap_menu()
+	
+func _on_OptionsRemapReturnButton_pressed():
+	show_options_menu()
+	
 func _on_OptionsReturnButton_pressed():
-	# hide options
-	options_fullscreen_button.hide()
-	options_music_button.hide()
-	options_sfx_button.hide()
-	options_remap_button.hide()
-	options_return_button.hide()
-	# restore menu
-	if options_state_start:
-		start_button.show()
-	if options_state_restart:
-		restart_button.show()
-	instructions_button.show()
-	options_button.show()
-	if not get_tree().is_paused():
-		credits_button.show()
-	credits_button.show()
-	quit_button.show()
-	options_button.grab_focus()
+	show_start_menu()
 
 func _on_QuitButton_pressed():
 	GameManager.quit_game()
