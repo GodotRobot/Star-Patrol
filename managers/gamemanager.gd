@@ -42,7 +42,7 @@ func finish_level_transition(next_level):
 
 func start_game():
 	# todo reset score, lives, etc.
-	current_level = 0
+	current_level = 1
 	TransitionScene.stop()
 	start_level_transition(current_level)
 	

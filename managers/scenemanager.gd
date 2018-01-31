@@ -4,6 +4,10 @@ extends Node
 
 # the currently active scene
 var current_scene = null
+
+func _init():
+	var root = GameManager.get_tree().get_root()
+	current_scene = root.get_child( root.get_child_count() -1 )
 	
 func goto_scene(path):
 	# This function will usually be called from a signal callback,
@@ -34,5 +38,5 @@ func _deferred_goto_scene(path):
 	# Add it to the active scene, as child of root
 	GameManager.add_child(current_scene)
 	# optional, to make it compatible with the SceneTree.change_scene() API
-	get_tree().set_current_scene(current_scene)
+	GameManager.get_tree().set_current_scene(current_scene)
 	
