@@ -1,16 +1,16 @@
 extends RigidBody2D
 
 # starting speed
-const DEFAULT_SPEED = 3200
+const DEFAULT_SPEED = 320
 # speed limit
-const MAX_SPEED = 8000
-const MIN_SPEED = 2800
+const MAX_SPEED = 800
+const MIN_SPEED = 280
 # speed change when pressing left or right
-const ACCELERATION = 4000
+const ACCELERATION = 400
 # 'up' force when pressing 'jump'
-const JUMP_SPEED = 8000
+const JUMP_SPEED = 800
 # 'up' force change to slow down the jump speed
-const JUMP_DEACCELERATION = 20000
+const JUMP_DEACCELERATION = 2000
 
 enum PLAYER_STATE {
 	default = 0,
@@ -25,36 +25,32 @@ var cur_velocity = Vector2()
 func _ready():
 	set_fixed_process(true)
 	cur_velocity.x = DEFAULT_SPEED
-	set_applied_force(cur_velocity)
+	set_linear_velocity(cur_velocity)
 	player_state = PLAYER_STATE.default
 	on_ground = false
 
 
 func _fixed_process(delta):
-	var change_velocity = false
+	
 	if player_state == PLAYER_STATE.jump:
 		cur_velocity.y += delta * JUMP_DEACCELERATION
-		change_velocity = true
 	else:
 		if Input.is_action_pressed("ui_right"):
 			cur_velocity.x += ACCELERATION * delta
-			change_velocity = true
-			
 		if Input.is_action_pressed("ui_left"):
 			cur_velocity.x -= ACCELERATION * delta
-			change_velocity = true
-			
 		if Input.is_action_pressed("ui_accept") and is_jump_allowed():
 			player_state = PLAYER_STATE.jump
 			cur_velocity.y = -JUMP_SPEED
 			on_ground = false
-			change_velocity = true
-			
-	if change_velocity:
-		# making sure the player is not over the speed limit
-		cur_velocity.x = clamp(cur_velocity.x, MIN_SPEED, MAX_SPEED)
-		cur_velocity.y = clamp(cur_velocity.y, -JUMP_SPEED, JUMP_SPEED)
-		set_applied_force(cur_velocity)
+
+	# making sure the player is not over the speed limit
+	cur_velocity.x = clamp(cur_velocity.x, MIN_SPEED, MAX_SPEED)
+	cur_velocity.y = clamp(cur_velocity.y, -JUMP_SPEED, JUMP_SPEED)
+
+
+func _integrate_forces(state):
+	set_linear_velocity(cur_velocity)
 
 
 func is_jump_allowed():
@@ -63,9 +59,8 @@ func is_jump_allowed():
 
 func _on_GroundHitCheck_body_enter(body):
 	var groups = body.get_groups()
-	if groups.has("ground"):
+	if groups.has("ground") and !on_ground:
 		# player touched the ground following a jump
 		on_ground = true
 		player_state = PLAYER_STATE.default
 		cur_velocity.y = 0
-		set_applied_force(cur_velocity)
