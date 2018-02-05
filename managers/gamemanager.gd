@@ -14,6 +14,7 @@ onready var scene_manager = preload("res://managers/scenemanager.gd").new()
 var current_level = 0
 enum GAME_STATES { START_MENU, GAME, PAUSE_MENU, WIN_SCREEN, LOSE_SCREEN }
 var current_state = GAME_STATES.START_MENU
+var current_player = null
 
 func _ready():
 	set_process(true)

@@ -27,6 +27,7 @@ func _ready():
 	cur_velocity.x = DEFAULT_SPEED
 	player_state = PLAYER_STATE.default
 	on_ground = false
+	GameManager.current_player = self
 
 
 func _fixed_process(delta):
