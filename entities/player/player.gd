@@ -20,7 +20,13 @@ enum PLAYER_STATE {
 var player_state = PLAYER_STATE.default
 var on_ground = false
 var cur_velocity = Vector2()
+var collision_test1 = Vector2(0,0)
+var collision_test2 = Vector2(0,0)
+var collision_test3 = Vector2(0,0)
 
+onready var front_wheel_ray = get_node("FrontWheelRayCast")
+onready var center_wheel_ray = get_node("CenterWheelRayCast")
+onready var back_wheel_ray = get_node("BackWheelRayCast")
 
 func _ready():
 	set_fixed_process(true)
@@ -28,7 +34,12 @@ func _ready():
 	player_state = PLAYER_STATE.default
 	on_ground = false
 	GameManager.current_player = self
+	
 
+func _draw():
+	draw_circle(collision_test1 - get_pos(), 10.0, Color(1.0,0,0))
+	draw_circle(collision_test2 - get_pos(), 10.0, Color(0,1.0,0))
+	draw_circle(collision_test3 - get_pos(), 10.0, Color(0,0,1.0))
 
 func _fixed_process(delta):
 	
@@ -43,10 +54,32 @@ func _fixed_process(delta):
 			player_state = PLAYER_STATE.jump
 			cur_velocity.y = -JUMP_SPEED
 			on_ground = false
-			
+	
 	cur_velocity.x = clamp(cur_velocity.x, MIN_SPEED, MAX_SPEED)
 	cur_velocity.y = clamp(cur_velocity.y, -JUMP_SPEED, JUMP_SPEED)
 	set_pos(get_pos() + cur_velocity)
+	
+	
+	if front_wheel_ray.is_colliding():
+		var hit_collider = front_wheel_ray.get_collider()
+		if hit_collider extends TileMap:
+			var hit_pos = front_wheel_ray.get_collision_point()
+			collision_test1 = hit_pos
+			
+	if center_wheel_ray.is_colliding():
+		var hit_collider = center_wheel_ray.get_collider()
+		if hit_collider extends TileMap:
+			var hit_pos = center_wheel_ray.get_collision_point()
+			collision_test2 = hit_pos
+	
+	if back_wheel_ray.is_colliding():
+		var hit_collider = back_wheel_ray.get_collider()
+		if hit_collider extends TileMap:
+			var hit_pos = back_wheel_ray.get_collision_point()
+			collision_test3 = hit_pos
+
+	
+	update()
 
 
 func is_jump_allowed():
