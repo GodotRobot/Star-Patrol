@@ -1,0 +1,1 @@
+This is the HTML5 export folder of the game.
