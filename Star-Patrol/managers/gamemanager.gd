@@ -29,7 +29,7 @@ func pause():
 
 func start_level_transition(next_level):
 	var title = "Get ready!"
-	var level_txt = "Level " + str(next_level)
+	var level_txt = "level " + str(next_level)
 	TransitionScene.init(next_level, level_txt, title)
 	TransitionScene.play()
 	if current_level == 1:
@@ -39,7 +39,7 @@ func start_level_transition(next_level):
 func finish_level_transition(next_level):
 	current_level = next_level
 	current_state = GAME_STATES.GAME
-	scene_manager.goto_scene("res://levels/Level" + str(next_level) + ".tscn")
+	scene_manager.goto_scene("res://levels/level" + str(next_level) + ".tscn")
 
 func start_game():
 	# todo reset score, lives, etc.
