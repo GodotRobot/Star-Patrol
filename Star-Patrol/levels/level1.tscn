@@ -136,7 +136,7 @@ region_rect = Rect2( 0, 0, 1280, 720 )
 
 transform/pos = Vector2( 629.225, 612.908 )
 
-[node name="TileMap" type="TileMap" parent="." groups=[
+[node name="TileMapGround" type="TileMap" parent="." groups=[
 "ground",
 ]]
 
