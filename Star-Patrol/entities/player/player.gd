@@ -17,7 +17,8 @@ const vehicle_wheel_offset = 20
 
 enum PLAYER_STATE {
 	default = 0,
-	jump = 1
+	jump = 1,
+	death = 2
 }
 
 onready var wheel_front = get_node("WheelFront")
@@ -94,3 +95,9 @@ func is_touching_ground():
 	
 	# we assume the vehicle tocuhes the ground of all wheels do
 	return ground_contact == wheels_array.size()
+
+
+func _on_Player_body_enter( body ):
+	var groups = body.get_groups()
+	if groups.has("death"):
+		print("death")

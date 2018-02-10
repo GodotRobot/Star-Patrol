@@ -35,5 +35,3 @@ func _on_Wheel_body_enter(body):
 	if groups.has("ground"):
 		# the wheel is in contact with the ground tiles
 		on_ground = true
-		
-	

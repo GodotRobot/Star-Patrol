@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resource_file type="TileSet" subresource_count="5" version="2.1" version_name="Godot Engine v2.1.4.stable.official">
+	<ext_resource path="res://art/tiles/death_32x64.tex" type="Texture" index="0"></ext_resource>
+	<ext_resource path="res://art/tiles/death_32x32.tex" type="Texture" index="1"></ext_resource>
+	<resource type="RectangleShape2D" path="local://1">
+		<real name="custom_solver_bias"> 0 </real>
+		<vector2 name="extents"> 31.8922, 15.9963 </vector2>
+
+	</resource>
+	<resource type="RectangleShape2D" path="local://2">
+		<real name="custom_solver_bias"> 0 </real>
+		<vector2 name="extents"> 16.2297, 15.9264 </vector2>
+
+	</resource>
+	<main_resource>
+		<string name="0/name"> "Death32x64" </string>
+		<resource name="0/texture" external="0">  </resource>
+		<vector2 name="0/tex_offset"> 0, 0 </vector2>
+		<resource name="0/material"></resource>		<color name="0/modulate"> 1, 1, 1, 1 </color>
+		<rect2 name="0/region"> 0, 0, 64, 32 </rect2>
+		<vector2 name="0/occluder_offset"> 32.395, 15.8088 </vector2>
+		<resource name="0/occluder"></resource>		<vector2 name="0/navigation_offset"> 32.395, 15.8088 </vector2>
+		<resource name="0/navigation"></resource>		<vector2 name="0/shape_offset"> 32.395, 15.8088 </vector2>
+		<array name="0/shapes" len="1" shared="false">
+			<resource  resource_type="Shape2D" path="local://1">  </resource>
+		</array>
+		<vector2 name="0/one_way_collision_direction"> 0, 0 </vector2>
+		<real name="0/one_way_collision_max_depth"> 0 </real>
+		<string name="1/name"> "Death32x32" </string>
+		<resource name="1/texture" external="1">  </resource>
+		<vector2 name="1/tex_offset"> 0, 0 </vector2>
+		<resource name="1/material"></resource>		<color name="1/modulate"> 1, 1, 1, 1 </color>
+		<rect2 name="1/region"> 0, 0, 32, 32 </rect2>
+		<vector2 name="1/occluder_offset"> 15.5477, 15.0206 </vector2>
+		<resource name="1/occluder"></resource>		<vector2 name="1/navigation_offset"> 15.5477, 15.0206 </vector2>
+		<resource name="1/navigation"></resource>		<vector2 name="1/shape_offset"> 15.5477, 15.0206 </vector2>
+		<array name="1/shapes" len="1" shared="false">
+			<resource  resource_type="Shape2D" path="local://2">  </resource>
+		</array>
+		<vector2 name="1/one_way_collision_direction"> 0, 0 </vector2>
+		<real name="1/one_way_collision_max_depth"> 0 </real>
+
+	</main_resource>
+</resource_file>
