@@ -6,8 +6,8 @@
 [ext_resource path="res://art/backgrounds/background0.tex" type="Texture" id=4]
 [ext_resource path="res://art/backgrounds/background1.tex" type="Texture" id=5]
 [ext_resource path="res://art/backgrounds/background2.tex" type="Texture" id=6]
-[ext_resource path="res://auxiliary/test_tileset_1.xml" type="TileSet" id=7]
-[ext_resource path="res://entities/player/player.tscn" type="PackedScene" id=8]
+[ext_resource path="res://entities/player/player.tscn" type="PackedScene" id=7]
+[ext_resource path="res://auxiliary/test_tileset_1.xml" type="TileSet" id=8]
 [ext_resource path="res://entities/enemy/Enemy1.tscn" type="PackedScene" id=9]
 
 [node name="Root" type="Node2D"]
@@ -132,12 +132,16 @@ centered = false
 region = true
 region_rect = Rect2( 0, 0, 1280, 720 )
 
+[node name="Player" parent="." instance=ExtResource( 7 )]
+
+transform/pos = Vector2( 629.225, 612.908 )
+
 [node name="TileMap" type="TileMap" parent="." groups=[
 "ground",
 ]]
 
 mode = 0
-tile_set = ExtResource( 7 )
+tile_set = ExtResource( 8 )
 cell/size = Vector2( 32, 32 )
 cell/quadrant_size = 16
 cell/custom_transform = Matrix32( 1, 0, 0, 1, 0, 0 )
@@ -151,10 +155,6 @@ collision/layers = 2
 collision/mask = 1
 occluder/light_mask = 1
 tile_data = IntArray( 1310720, 0, 1310722, 0, 1310724, 0, 1310726, 0, 1310728, 0, 1310730, 0, 1310732, 0, 1310734, 0, 1310736, 0, 1310738, 0, 1310740, 0, 1310742, 0, 1310744, 0, 1310746, 1, 1310748, 2, 1310750, 0, 1310752, 0, 1310754, 5, 1310756, 6, 1310758, 0, 1310760, 0, 1310762, 0, 1310764, 1, 1310766, 2, 1310768, 0, 1310770, 0, 1310772, 0, 1310774, 5, 1310778, 6, 1310780, 0, 1310782, 0, 1310784, 0, 1310786, 1, 1310788, 2, 1310790, 0, 1310792, 0, 1310794, 0, 1310796, 5, 1310798, 6, 1310800, 0, 1310802, 0, 1310804, 0, 1310806, 0, 1376256, 7, 1376258, 7, 1376260, 7, 1376262, 7, 1376264, 7, 1376266, 7, 1376268, 7, 1376270, 7, 1376272, 7, 1376274, 7, 1376276, 7, 1376278, 7, 1376280, 7, 1376282, 7, 1376284, 7, 1376286, 7, 1376288, 7, 1376294, 7, 1376296, 7, 1376298, 7, 1376300, 7, 1376302, 7, 1376304, 7, 1376306, 7, 1376308, 7, 1376312, 0, 1376316, 7, 1376318, 7, 1376320, 7, 1376322, 7, 1376324, 7, 1376326, 7, 1376328, 7, 1376330, 7, 1376336, 7, 1376338, 7, 1376340, 7, 1376342, 7, 1441826, 7, 1441828, 7, 1441846, 7, 1441848, 7, 1441850, 7, 1441868, 7, 1441870, 7 )
-
-[node name="Player" parent="." instance=ExtResource( 8 )]
-
-transform/pos = Vector2( 629.225, 612.908 )
 
 [node name="Enemy" parent="." instance=ExtResource( 9 )]
 
