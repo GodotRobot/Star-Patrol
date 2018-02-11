@@ -1,6 +1,10 @@
 extends Area2D
 
+# ray detecting collision with the ground tiles
 onready var ray_cast = get_node("RayCast2D")
+# the turning wheel animation player
+onready var wheel_anim = get_node("AnimationPlayer")
+
 var collision_pos = Vector2()
 var radius = 0.0
 var on_ground = false
@@ -10,6 +14,7 @@ func _ready():
 	set_fixed_process(true)
 	on_ground = false
 	radius = get_node("Sprite").get_texture().get_width() / 2.0
+	wheel_anim.play("WheelRotation")
 	
 func _fixed_process(delta):
 	if ray_cast.is_colliding():
@@ -35,3 +40,6 @@ func _on_Wheel_body_enter(body):
 	if groups.has("ground"):
 		# the wheel is in contact with the ground tiles
 		on_ground = true
+	
+func set_rotation_speed(speed):
+	wheel_anim.set_speed(speed)

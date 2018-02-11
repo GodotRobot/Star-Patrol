@@ -53,9 +53,8 @@ func _fixed_process(delta):
 	cur_velocity.x = clamp(cur_velocity.x, MIN_SPEED, MAX_SPEED)
 	cur_velocity.y = clamp(cur_velocity.y, -JUMP_SPEED, JUMP_SPEED)
 	
-	update_wheels_pos()
-	update_vehicle_pos()
-
+	update_wheels() # update wheels speed and position
+	update_vehicle() # move the vehicle forward and keep the vehicle above the wheels
 
 func is_jump_allowed():
 	return player_state == PLAYER_STATE.default
@@ -66,7 +65,7 @@ func jump():
 	for wheel in wheels_array:
 		wheel.reset_ground_col_check()
 	
-func update_vehicle_pos():
+func update_vehicle():
 	set_pos(get_pos() + cur_velocity)
 	
 	if player_state == PLAYER_STATE.default:
@@ -75,17 +74,25 @@ func update_vehicle_pos():
 		new_pos.y += wheel_center.get_pos().y - vehicle_wheel_offset
 		set_pos(new_pos)
 	
-		# reset and rotate the vehicle to match the two outer wheels ground collision points
+		# rotate the vehicle to match the two outer wheels ground collision points
 		set_rot(0)
 		var horizontal = Vector2(100,0)
 		var player_vector = wheel_front.get_colliding_position() - wheel_back.get_colliding_position()
 		var angle = horizontal.angle_to(player_vector)
 		set_rot(angle)
 	
-func update_wheels_pos():
+func update_wheels():
 	for wheel in wheels_array:
 		if wheel.is_on_ground():
+			# keep the wheel on the ground tiles
 			wheel.set_pos(wheel.get_colliding_position())
+		if player_state == PLAYER_STATE.default:
+			# change the wheels rotation based on current speed
+			var speed_factor = cur_velocity.x / DEFAULT_SPEED
+			wheel.set_rotation_speed(speed_factor)
+		elif player_state == PLAYER_STATE.jump:
+			# disable wheels rotation while jumping
+			wheel.set_rotation_speed(0)
 
 func is_touching_ground():
 	var ground_contact = 0
@@ -93,11 +100,11 @@ func is_touching_ground():
 		if wheel.is_on_ground():
 			ground_contact += 1
 	
-	# we assume the vehicle tocuhes the ground of all wheels do
+	# we assume the vehicle touches the ground if all wheels do
 	return ground_contact == wheels_array.size()
 
-
-func _on_Player_body_enter( body ):
+func _on_Player_body_enter(body):
 	var groups = body.get_groups()
 	if groups.has("death"):
+		# TODO: add death logic
 		print("death")
