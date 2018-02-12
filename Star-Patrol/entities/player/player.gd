@@ -1,19 +1,21 @@
 extends Area2D
 
-# starting speed
-const DEFAULT_SPEED = 3
+# starting speed, pixels/sec
+const DEFAULT_SPEED = 100
 # speed limit
-const MAX_SPEED = 6
-const MIN_SPEED = 3
+const MAX_SPEED = 300
+const MIN_SPEED = 100
 # speed change when pressing left or right
 const ACCELERATION = 2
 # 'up' force when pressing 'jump'
-const JUMP_SPEED = 3
+const JUMP_SPEED = 1000
 # 'up' force change to slow down the jump speed
-const JUMP_DEACCELERATION = 4
+const JUMP_DEACCELERATION = 50
+# how fast will the vehicle rotate to 0 degrees after a jump
+#const ROT_RESET_SPEED = 3
 
 # distance of the wheel from the vehicle on the y axis
-const vehicle_wheel_offset = 20
+const VEHICLE_TO_WHEEL_OFFSET = 20
 
 enum PLAYER_STATE {
 	default = 0,
@@ -28,6 +30,7 @@ onready var wheels_array = [wheel_front, wheel_center, wheel_back]
 
 var player_state = PLAYER_STATE.default
 var cur_velocity = Vector2()
+var jump_slowdown = 0
 
 
 func _ready():
@@ -39,44 +42,60 @@ func _ready():
 	
 func _fixed_process(delta):
 	if player_state == PLAYER_STATE.jump:
-		cur_velocity.y += delta * JUMP_DEACCELERATION	
-		if is_touching_ground():
-			player_state = PLAYER_STATE.default
+		update_jump(delta)
 	else:
 		if Input.is_action_pressed("ui_right"):
-			cur_velocity.x += ACCELERATION * delta
+			cur_velocity.x += ACCELERATION
 		if Input.is_action_pressed("ui_left"):
-			cur_velocity.x -= ACCELERATION * delta
+			cur_velocity.x -= ACCELERATION
 		if Input.is_action_pressed("ui_accept") and is_jump_allowed():
 			jump()
-	
+
+	# keep the velocity at a fixed range
 	cur_velocity.x = clamp(cur_velocity.x, MIN_SPEED, MAX_SPEED)
 	cur_velocity.y = clamp(cur_velocity.y, -JUMP_SPEED, JUMP_SPEED)
 	
 	update_wheels() # update wheels speed and position
-	update_vehicle() # move the vehicle forward and keep the vehicle above the wheels
+	update_vehicle(delta) # move the vehicle forward and keep the vehicle above the wheels
 
 func is_jump_allowed():
 	return player_state == PLAYER_STATE.default
 	
 func jump():
 	player_state = PLAYER_STATE.jump
-	cur_velocity.y = -JUMP_SPEED
+	jump_slowdown = 0
 	for wheel in wheels_array:
-		wheel.reset_ground_col_check()
+		wheel.set_rotation_speed(0)
+
+func update_jump(delta):
+	cur_velocity.y -= delta * JUMP_SPEED
 	
-func update_vehicle():
-	set_pos(get_pos() + cur_velocity)
+	jump_slowdown += delta * JUMP_DEACCELERATION
+	cur_velocity.y += jump_slowdown
+	
+	# going up, ignore ground collision check, signaling the end of the jump
+	if (cur_velocity.y < 0):
+		for wheel in wheels_array:
+			wheel.reset_ground_col_check()
+	
+	#var new_angle = lerp(get_rot(), 0.0, delta * ROT_RESET_SPEED)
+	#set_rot(new_angle)
+	
+	if is_touching_ground():
+		cur_velocity.y = 0
+		set_rot(0)
+		player_state = PLAYER_STATE.default
+	
+func update_vehicle(delta):
+	var new_pos = get_pos() + (cur_velocity * delta)
+	# use the center wheel to position the vehicle above the wheels
+	new_pos.y += wheel_center.get_pos().y - VEHICLE_TO_WHEEL_OFFSET
+	set_pos(new_pos)
 	
 	if player_state == PLAYER_STATE.default:
-		var new_pos = get_pos()
-		# use the center wheel to position the vehicle above the wheels
-		new_pos.y += wheel_center.get_pos().y - vehicle_wheel_offset
-		set_pos(new_pos)
-	
 		# rotate the vehicle to match the two outer wheels ground collision points
 		set_rot(0)
-		var horizontal = Vector2(100,0)
+		var horizontal = Vector2(1,0)
 		var player_vector = wheel_front.get_colliding_position() - wheel_back.get_colliding_position()
 		var angle = horizontal.angle_to(player_vector)
 		set_rot(angle)
@@ -90,9 +109,6 @@ func update_wheels():
 			# change the wheels rotation based on current speed
 			var speed_factor = cur_velocity.x / DEFAULT_SPEED
 			wheel.set_rotation_speed(speed_factor)
-		elif player_state == PLAYER_STATE.jump:
-			# disable wheels rotation while jumping
-			wheel.set_rotation_speed(0)
 
 func is_touching_ground():
 	var ground_contact = 0
