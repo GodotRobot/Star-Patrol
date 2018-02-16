@@ -176,7 +176,7 @@ collision/bounce = 0.0
 collision/layers = 4
 collision/mask = 1
 occluder/light_mask = 1
-tile_data = IntArray( 4915309, 1, 5308553, 0, 5308560, 0 )
+tile_data = IntArray( 5308553, 0, 5308560, 0, 5308633, 0, 5308640, 0, 5308647, 0, 5308721, 0, 5308727, 0 )
 
 [node name="Enemy" parent="." instance=ExtResource( 10 )]
 

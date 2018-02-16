@@ -28,6 +28,8 @@ onready var wheel_center = get_node("WheelCenter")
 onready var wheel_back = get_node("WheelBack")
 onready var wheels_array = [wheel_front, wheel_center, wheel_back]
 
+onready var death_anim = get_node("DeathAnimation")
+
 var player_state = PLAYER_STATE.default
 var cur_velocity = Vector2()
 var jump_slowdown_factor = 0
@@ -41,6 +43,10 @@ func _ready():
 	
 	
 func _fixed_process(delta):
+	
+	if player_state == PLAYER_STATE.death:
+		return
+	
 	if player_state == PLAYER_STATE.jump:
 		update_jump(delta)
 	else:
@@ -119,8 +125,18 @@ func is_touching_ground():
 	# we assume the vehicle touches the ground if at least 1 wheel does
 	return ground_contact >= 1
 
+func kill():
+	player_state = PLAYER_STATE.death
+	get_node("Sprite").hide()
+	for wheel in wheels_array:
+		wheel.hide()
+	death_anim.play("Death")
+
 func _on_Player_body_enter(body):
 	var groups = body.get_groups()
 	if groups.has("death"):
-		# TODO: add death logic
-		print("death")
+		# player died by hitting a 'death' tile
+		kill()
+
+func _on_DeathAnimation_finished():
+	death_anim.hide()
