@@ -3,16 +3,16 @@ extends Area2D
 # starting speed, pixels/sec
 const DEFAULT_SPEED = 100
 # speed limit
-const MAX_SPEED = 300
+const MAX_SPEED = 250
 const MIN_SPEED = 100
 # speed change when pressing left or right
 const ACCELERATION = 2
 # 'up' force when pressing 'jump'
-const JUMP_SPEED = 1000
+const JUMP_SPEED = 250
 # 'up' force change to slow down the jump speed
-const JUMP_DEACCELERATION = 50
+const JUMP_DEACCELERATION = 10
 # how fast will the vehicle rotate to 0 degrees after a jump
-#const ROT_RESET_SPEED = 3
+const ROT_RESET_SPEED = 3
 
 # distance of the wheel from the vehicle on the y axis
 const VEHICLE_TO_WHEEL_OFFSET = 20
@@ -30,7 +30,7 @@ onready var wheels_array = [wheel_front, wheel_center, wheel_back]
 
 var player_state = PLAYER_STATE.default
 var cur_velocity = Vector2()
-var jump_slowdown = 0
+var jump_slowdown_factor = 0
 
 
 func _ready():
@@ -55,33 +55,33 @@ func _fixed_process(delta):
 	cur_velocity.x = clamp(cur_velocity.x, MIN_SPEED, MAX_SPEED)
 	cur_velocity.y = clamp(cur_velocity.y, -JUMP_SPEED, JUMP_SPEED)
 	
-	update_wheels() # update wheels speed and position
-	update_vehicle(delta) # move the vehicle forward and keep the vehicle above the wheels
+	update_wheels() # update wheels rotation speed and position
+	update_vehicle(delta) # move the vehicle and keep the vehicle above the wheels
 
 func is_jump_allowed():
 	return player_state == PLAYER_STATE.default
 	
 func jump():
+	# enter jump mode, add initial jump speed
 	player_state = PLAYER_STATE.jump
-	jump_slowdown = 0
+	cur_velocity.y -= JUMP_SPEED
+	# during the jump, the player starts to slow down and head back down
+	jump_slowdown_factor = 0
+	# let the wheels know we are no longer on the ground
 	for wheel in wheels_array:
-		wheel.set_rotation_speed(0)
+		wheel.reset_ground_col_check()
 
 func update_jump(delta):
-	cur_velocity.y -= delta * JUMP_SPEED
+	# add the slowdown factor for the jump so it would appear more realistic
+	jump_slowdown_factor += delta * JUMP_DEACCELERATION
+	cur_velocity.y += jump_slowdown_factor
 	
-	jump_slowdown += delta * JUMP_DEACCELERATION
-	cur_velocity.y += jump_slowdown
-	
-	# going up, ignore ground collision check, signaling the end of the jump
-	if (cur_velocity.y < 0):
-		for wheel in wheels_array:
-			wheel.reset_ground_col_check()
-	
-	#var new_angle = lerp(get_rot(), 0.0, delta * ROT_RESET_SPEED)
-	#set_rot(new_angle)
+	# revert vehicle rotation during the jump
+	var new_angle = lerp(get_rot(), 0.0, delta * ROT_RESET_SPEED)
+	set_rot(new_angle)
 	
 	if is_touching_ground():
+		# player landed after a jump
 		cur_velocity.y = 0
 		set_rot(0)
 		player_state = PLAYER_STATE.default
@@ -116,8 +116,8 @@ func is_touching_ground():
 		if wheel.is_on_ground():
 			ground_contact += 1
 	
-	# we assume the vehicle touches the ground if all wheels do
-	return ground_contact == wheels_array.size()
+	# we assume the vehicle touches the ground if at least 1 wheel does
+	return ground_contact >= 1
 
 func _on_Player_body_enter(body):
 	var groups = body.get_groups()
