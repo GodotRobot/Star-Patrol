@@ -5,16 +5,19 @@
 # menu isn't being removed from the tree once te scene changes. why?
 # as a result, pressing ui_accept will restart the first level (start button is still in focus)
 
-
 extends Node
+
+const LEVEL_BASE = preload("res://levels/level_base.gd")
 
 # scene switching
 onready var scene_manager = preload("res://managers/scenemanager.gd").new()
 
-var current_level = 0
 enum GAME_STATES { START_MENU, GAME, PAUSE_MENU, WIN_SCREEN, LOSE_SCREEN }
+var current_level = 0
 var current_state = GAME_STATES.START_MENU
 var current_player = null
+
+
 
 func _ready():
 	set_process(true)
@@ -22,6 +25,13 @@ func _ready():
 func _process(delta):
 	if Input.is_action_pressed("ui_cancel"):
 		pause()
+	
+	if current_player:
+		if current_player.is_killed():
+			var cur_level = scene_manager.current_scene
+			if cur_level extends LEVEL_BASE:
+				# ignore lives for now, respawn at the beginning of the level
+				cur_level.respawn()
 
 func pause():
 	current_state = GAME_STATES.PAUSE_MENU

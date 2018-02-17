@@ -20,7 +20,9 @@ const VEHICLE_TO_WHEEL_OFFSET = 20
 enum PLAYER_STATE {
 	default = 0,
 	jump = 1,
-	death = 2
+	death_anim = 2,
+	killed = 3,
+	finish
 }
 
 onready var wheel_front = get_node("WheelFront")
@@ -37,16 +39,20 @@ var jump_slowdown_factor = 0
 
 func _ready():
 	set_fixed_process(true)
-	cur_velocity.x = DEFAULT_SPEED
-	player_state = PLAYER_STATE.default
 	GameManager.current_player = self
-	
-	
+	activate()
+
+func activate():
+	player_state = PLAYER_STATE.default
+	get_node("Sprite").show()
+	for wheel in wheels_array:
+		wheel.show()
+	set_rot(0)
+	cur_velocity = Vector2(DEFAULT_SPEED, 0)
+
 func _fixed_process(delta):
-	
-	if player_state == PLAYER_STATE.death:
+	if player_state == PLAYER_STATE.death_anim or player_state == PLAYER_STATE.finish:
 		return
-	
 	if player_state == PLAYER_STATE.jump:
 		update_jump(delta)
 	else:
@@ -121,15 +127,16 @@ func is_touching_ground():
 	for wheel in wheels_array:
 		if wheel.is_on_ground():
 			ground_contact += 1
-	
 	# we assume the vehicle touches the ground if at least 1 wheel does
 	return ground_contact >= 1
 
 func kill():
-	player_state = PLAYER_STATE.death
+	player_state = PLAYER_STATE.death_anim
 	get_node("Sprite").hide()
 	for wheel in wheels_array:
 		wheel.hide()
+	death_anim.set_frame(0)
+	death_anim.show()
 	death_anim.play("Death")
 
 func _on_Player_body_enter(body):
@@ -137,6 +144,16 @@ func _on_Player_body_enter(body):
 	if groups.has("death"):
 		# player died by hitting a 'death' tile
 		kill()
+	elif groups.has("finish"):
+		# player reached the level's finish line
+		for wheel in wheels_array:
+			wheel.set_rotation_speed(0)
+		player_state = PLAYER_STATE.finish
 
 func _on_DeathAnimation_finished():
 	death_anim.hide()
+	player_state = PLAYER_STATE.killed
+
+func is_killed():
+	return player_state == PLAYER_STATE.killed
+

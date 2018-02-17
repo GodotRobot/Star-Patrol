@@ -1,18 +1,28 @@
-[gd_scene load_steps=8 format=1]
+[gd_scene load_steps=11 format=1]
 
-[ext_resource path="res://art/backgrounds/stars1.tex" type="Texture" id=1]
-[ext_resource path="res://art/backgrounds/mountains1.tex" type="Texture" id=2]
-[ext_resource path="res://art/backgrounds/clouds1.tex" type="Texture" id=3]
-[ext_resource path="res://art/backgrounds/background0.tex" type="Texture" id=4]
-[ext_resource path="res://art/backgrounds/background1.tex" type="Texture" id=5]
-[ext_resource path="res://art/backgrounds/background2.tex" type="Texture" id=6]
-[ext_resource path="res://entities/player/player.tscn" type="PackedScene" id=7]
+[ext_resource path="res://levels/level_base.gd" type="Script" id=1]
+[ext_resource path="res://art/backgrounds/stars1.tex" type="Texture" id=2]
+[ext_resource path="res://art/backgrounds/mountains1.tex" type="Texture" id=3]
+[ext_resource path="res://art/backgrounds/clouds1.tex" type="Texture" id=4]
+[ext_resource path="res://art/backgrounds/background0.tex" type="Texture" id=5]
+[ext_resource path="res://art/backgrounds/background1.tex" type="Texture" id=6]
+[ext_resource path="res://art/backgrounds/background2.tex" type="Texture" id=7]
+[ext_resource path="res://entities/player/player.tscn" type="PackedScene" id=8]
+[ext_resource path="res://art/tiles/death_32x32.tex" type="Texture" id=9]
+
+[sub_resource type="RectangleShape2D" id=1]
+
+custom_solver_bias = 0.0
+extents = Vector2( 17.6725, 193.833 )
 
 [node name="Root" type="Node2D"]
 
+script/script = ExtResource( 1 )
 __meta__ = {
 "_edit_lock_": true
 }
+respawn_pos_x = null
+respawn_pos_y = null
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 
@@ -40,7 +50,7 @@ __meta__ = {
 
 [node name="Sprite" type="Sprite" parent="ParallaxBackground/StaticLayer"]
 
-texture = ExtResource( 1 )
+texture = ExtResource( 2 )
 centered = false
 region = true
 region_rect = Rect2( 0, 0, 1280, 720 )
@@ -57,7 +67,7 @@ __meta__ = {
 
 [node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer0"]
 
-texture = ExtResource( 2 )
+texture = ExtResource( 3 )
 centered = false
 region = true
 region_rect = Rect2( 0, 0, 1280, 720 )
@@ -74,7 +84,7 @@ __meta__ = {
 
 [node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer1"]
 
-texture = ExtResource( 3 )
+texture = ExtResource( 4 )
 centered = false
 region = true
 region_rect = Rect2( 0, 0, 1280, 720 )
@@ -91,7 +101,7 @@ __meta__ = {
 
 [node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer2"]
 
-texture = ExtResource( 4 )
+texture = ExtResource( 5 )
 centered = false
 region = true
 region_rect = Rect2( 0, 0, 1280, 720 )
@@ -108,7 +118,7 @@ __meta__ = {
 
 [node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer3"]
 
-texture = ExtResource( 5 )
+texture = ExtResource( 6 )
 centered = false
 region = true
 region_rect = Rect2( 0, 0, 1280, 720 )
@@ -125,12 +135,12 @@ __meta__ = {
 
 [node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer4"]
 
-texture = ExtResource( 6 )
+texture = ExtResource( 7 )
 centered = false
 region = true
 region_rect = Rect2( 0, 0, 1280, 720 )
 
-[node name="Player" parent="." instance=ExtResource( 7 )]
+[node name="Player" parent="." instance=ExtResource( 8 )]
 
 transform/pos = Vector2( 629.225, 612.908 )
 
@@ -174,5 +184,34 @@ collision/layers = 4
 collision/mask = 1
 occluder/light_mask = 1
 tile_data = IntArray(  )
+
+[node name="FinishLine" type="Sprite" parent="."]
+
+editor/display_folded = true
+transform/pos = Vector2( 924.516, 594.565 )
+texture = ExtResource( 9 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="FinishLine" groups=[
+"finish",
+]]
+
+input/pickable = false
+shapes/0/shape = SubResource( 1 )
+shapes/0/transform = Matrix32( 1, 0, 0, 1, 0, 0 )
+shapes/0/trigger = false
+collision/layers = 4
+collision/mask = 1
+constant_linear_velocity = Vector2( 0, 0 )
+constant_angular_velocity = 0.0
+friction = 1.0
+bounce = 0.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FinishLine/StaticBody2D"]
+
+shape = SubResource( 1 )
+trigger = false
+_update_shape_index = 0
+
+[connection signal="area_enter" from="Player" to="Player" method="_on_Player_area_enter"]
 
 

@@ -7,6 +7,9 @@
 
 [node name="Root" instance=ExtResource( 1 )]
 
+respawn_pos_x = 550
+respawn_pos_y = 617
+
 [node name="TileMapGround" parent="."]
 
 tile_set = ExtResource( 2 )
@@ -16,6 +19,11 @@ tile_data = IntArray( 1310720, 0, 1310722, 0, 1310724, 0, 1310726, 0, 1310728, 0
 
 tile_set = ExtResource( 3 )
 tile_data = IntArray( 5374105, 0, 5374112, 0, 5374177, 0, 5374184, 0, 5374191, 0, 5374289, 0, 5374295, 0, 5374329, 0, 5374336, 0 )
+
+[node name="FinishLine" parent="."]
+
+visibility/visible = false
+transform/pos = Vector2( 3888.51, 621.158 )
 
 [node name="Enemy1" parent="." instance=ExtResource( 4 )]
 
