@@ -16,6 +16,7 @@ onready var credits_button = get_node("Menu/CreditsButton")
 onready var quit_button = get_node("Menu/QuitButton")
 
 func _ready():
+	start_button.grab_focus()
 	set_process_input(true)
 
 func _input(event):
