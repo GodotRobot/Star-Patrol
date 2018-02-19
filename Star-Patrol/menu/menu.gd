@@ -1,3 +1,5 @@
+# very important: the scene's pause processing mode should be "process" and not "idle"
+
 extends CanvasLayer
 
 # buttons
@@ -15,14 +17,42 @@ onready var options_return_button = get_node("Menu/OptionsReturnButton")
 onready var credits_button = get_node("Menu/CreditsButton")
 onready var quit_button = get_node("Menu/QuitButton")
 
+# state
+enum MODE {
+	start,
+	pause,
+	game_over,
+	win
+}
+var mode = MODE.start
+
 func _ready():
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	start_button.grab_focus()
 	set_process_input(true)
+	if mode == MODE.start:
+		pass
+	elif mode == MODE.pause:
+		#context.set_text("Paused")
+		start_button.set_text("Continue")
+		restart_button.show()
+	elif mode == MODE.game_over:
+		#context.set_text("GAME OVER")
+		start_button.set_text("Try again")
+		restart_button.hide()
+		show_popup_and_get_name()
+	elif mode == MODE.win:
+		#context.set_text("WIN")
+		start_button.set_text("Play again")
+		restart_button.hide()
+		show_popup_and_get_name()
 
 func _input(event):
 	if event.is_action_pressed("ui_cancel"):
-		if quit_button.is_visible():
-			GameManager.quit_game()
+		if mode == MODE.pause:
+			GameManager.unpause(self)
+		#if quit_button.is_visible():
+		#	GameManager.quit_game()
 		elif options_return_button.is_visible():
 			show_start_menu()
 		elif options_remap_return_button.is_visible():
@@ -30,8 +60,15 @@ func _input(event):
 				show_options_menu()
 
 func _on_StartButton_pressed():
-	GameManager.start_game()
+	if mode == MODE.pause:
+		GameManager.unpause(self)
+	else:
+		GameManager.start_game()
 
+func _on_RestartButton_pressed():
+	GameManager.unpause(self)
+	GameManager.start_game()
+	
 func update_options_buttons():
 	pass
 #TODO

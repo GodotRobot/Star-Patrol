@@ -10,6 +10,7 @@
 
 [node name="Menu" type="CanvasLayer"]
 
+process/pause_mode = 2
 layer = 1
 offset = Vector2( 0, 0 )
 rotation = 0.0
@@ -231,7 +232,7 @@ custom_fonts/font = ExtResource( 6 )
 toggle_mode = false
 enabled_focus_mode = 2
 shortcut = null
-text = "Start"
+text = "Restart"
 flat = false
 __meta__ = {
 "_edit_lock_": true
@@ -659,6 +660,8 @@ __meta__ = {
 }
 
 [connection signal="pressed" from="Menu/StartButton" to="." method="_on_StartButton_pressed"]
+
+[connection signal="pressed" from="Menu/RestartButton" to="." method="_on_RestartButton_pressed"]
 
 [connection signal="pressed" from="Menu/OptionsButton" to="." method="_on_OptionsButton_pressed"]
 
