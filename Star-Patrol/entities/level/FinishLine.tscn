@@ -7,7 +7,9 @@
 custom_solver_bias = 0.0
 extents = Vector2( 17.6725, 193.833 )
 
-[node name="FinishLine" type="Sprite"]
+[node name="FinishLine" type="Sprite" groups=[
+"finish",
+]]
 
 transform/pos = Vector2( 924.516, 594.565 )
 texture = ExtResource( 1 )

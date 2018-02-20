@@ -1,0 +1,64 @@
+[gd_scene load_steps=5 format=1]
+
+[ext_resource path="res://entities/player/gun.gd" type="Script" id=1]
+[ext_resource path="res://entities/player/player_gun.png" type="Texture" id=2]
+
+[sub_resource type="ConvexPolygonShape2D" id=1]
+
+custom_solver_bias = 0.0
+points = Vector2Array( -16.3398, -2.56934, -13.8922, -5.36653, 13.0307, -5.36653, 16.3524, -2.74416, 16.3524, 1.62645, 13.9049, 4.77329, -13.5426, 4.77329, -16.6894, 1.80127 )
+
+[sub_resource type="Animation" id=2]
+
+resource/name = "RaiseGun"
+length = 0.2
+loop = false
+step = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:transform/rot")
+tracks/0/interp = 1
+tracks/0/imported = false
+tracks/0/keys = {
+"times": FloatArray( 0, 0.2 ),
+"transitions": FloatArray( 1, 1 ),
+"update": 0,
+"values": [ 0.0, 90.0 ]
+}
+
+[node name="Gun" type="Area2D"]
+
+input/pickable = true
+shapes/0/shape = SubResource( 1 )
+shapes/0/transform = Matrix32( 1, 0, 0, 1, 0, 0 )
+shapes/0/trigger = false
+gravity_vec = Vector2( 0, 1 )
+gravity = 98.0
+linear_damp = 0.1
+angular_damp = 1.0
+script/script = ExtResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+
+transform/pos = Vector2( -12.6192, -0.223221 )
+texture = ExtResource( 2 )
+offset = Vector2( 12.6192, 0.223221 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+
+build_mode = 0
+polygon = Vector2Array( -16.3398, -2.56934, -13.8922, -5.36653, 13.0307, -5.36653, 16.3524, -2.74416, 16.3524, 1.62645, 13.9049, 4.77329, -13.5426, 4.77329, -16.6894, 1.80127 )
+shape_range = Vector2( 0, 0 )
+trigger = false
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+playback/process_mode = 1
+playback/default_blend_time = 0.0
+root/root = NodePath("..")
+anims/RaiseGun = SubResource( 2 )
+playback/active = true
+playback/speed = 1.0
+blend_times = [  ]
+autoplay = ""
+
+
