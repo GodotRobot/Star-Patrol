@@ -3,7 +3,7 @@
 [ext_resource path="res://entities/player/gun.gd" type="Script" id=1]
 [ext_resource path="res://entities/player/player_gun.png" type="Texture" id=2]
 
-[sub_resource type="ConvexPolygonShape2D" id=1]
+[sub_resource type="ConvexPolygonShape2D" id=3]
 
 custom_solver_bias = 0.0
 points = Vector2Array( -16.3398, -2.56934, -13.8922, -5.36653, 13.0307, -5.36653, 16.3524, -2.74416, 16.3524, 1.62645, 13.9049, 4.77329, -13.5426, 4.77329, -16.6894, 1.80127 )
@@ -24,11 +24,31 @@ tracks/0/keys = {
 "update": 0,
 "values": [ 0.0, 90.0 ]
 }
+tracks/1/type = "value"
+tracks/1/path = NodePath("CollisionPolygon2D:transform/rot")
+tracks/1/interp = 1
+tracks/1/imported = false
+tracks/1/keys = {
+"times": FloatArray( 0, 0.1, 0.2 ),
+"transitions": FloatArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 45.0, 90.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("CollisionPolygon2D:transform/pos")
+tracks/2/interp = 1
+tracks/2/imported = false
+tracks/2/keys = {
+"times": FloatArray( 0, 0.1, 0.2 ),
+"transitions": FloatArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ), Vector2( -3, -9 ), Vector2( -12, -13 ) ]
+}
 
 [node name="Gun" type="Area2D"]
 
 input/pickable = true
-shapes/0/shape = SubResource( 1 )
+shapes/0/shape = SubResource( 3 )
 shapes/0/transform = Matrix32( 1, 0, 0, 1, 0, 0 )
 shapes/0/trigger = false
 gravity_vec = Vector2( 0, 1 )

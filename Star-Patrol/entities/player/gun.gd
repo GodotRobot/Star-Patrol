@@ -1,17 +1,23 @@
 extends Area2D
 
 onready var gun_animation = get_node("AnimationPlayer")
-var gun_raised = false
+var is_raised = false
 
 func _ready():
 	pass
 	
-func raise_gun():
-	if not gun_raised:
+func raise():
+	if not is_raised:
 		gun_animation.play("RaiseGun")
-		gun_raised = true
+		is_raised = true
 	
-func lower_gun():
-	if gun_raised:
+func lower():
+	if is_raised:
 		gun_animation.play_backwards("RaiseGun")
-		gun_raised = false
+		is_raised = false
+
+func reset():
+	# reset raise gun animation
+	gun_animation.seek(0, true)
+	is_raised = false
+	show()

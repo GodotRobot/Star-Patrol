@@ -46,8 +46,7 @@ func _ready():
 func activate():
 	player_state = PLAYER_STATE.default
 	get_node("Sprite").show()
-	gun.lower_gun()
-	gun.show()
+	gun.reset()
 	for wheel in wheels_array:
 		wheel.show()
 	set_rot(0)
@@ -67,9 +66,9 @@ func _fixed_process(delta):
 			jump()
 	
 	if Input.is_action_pressed("ui_up"):
-		gun.raise_gun()
+		gun.raise()
 	if Input.is_action_pressed("ui_down"):
-		gun.lower_gun()
+		gun.lower()
 
 	# keep the velocity at a fixed range
 	cur_velocity.x = clamp(cur_velocity.x, MIN_SPEED, MAX_SPEED)
@@ -166,3 +165,7 @@ func _on_DeathAnimation_finished():
 func is_killed():
 	return player_state == PLAYER_STATE.killed
 
+
+
+func _on_Player_area_enter( area ):
+	pass # replace with function body

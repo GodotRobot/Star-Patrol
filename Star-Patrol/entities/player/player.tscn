@@ -203,6 +203,8 @@ animation = "default"
 
 transform/pos = Vector2( -10, -30 )
 
+[connection signal="area_enter" from="." to="." method="_on_Player_area_enter"]
+
 [connection signal="body_enter" from="." to="." method="_on_Player_body_enter"]
 
 [connection signal="finished" from="DeathAnimation" to="." method="_on_DeathAnimation_finished"]
