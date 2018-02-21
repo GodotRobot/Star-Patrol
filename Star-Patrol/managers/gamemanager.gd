@@ -30,7 +30,7 @@ func _input(event):
 
 func _process(delta):
 	if current_player:
-		if current_player.is_killed():
+		if current_player.is_killed() or current_player.is_reached_end_of_level():
 			var cur_level = scene_manager.current_scene
 			if cur_level extends LEVEL_BASE:
 				# ignore lives for now, respawn at the beginning of the level

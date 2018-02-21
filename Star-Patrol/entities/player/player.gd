@@ -13,16 +13,18 @@ const JUMP_SPEED = 250
 const JUMP_DEACCELERATION = 10
 # how fast will the vehicle rotate to 0 degrees after a jump
 const ROT_RESET_SPEED = 3
-
 # distance of the wheel from the vehicle on the y axis
 const VEHICLE_TO_WHEEL_OFFSET = 20
+# once the player hit the finish line, allow it to advance for this amount of time (sec) until the level is finished
+const POST_FINISH_LINE_DELAY = 4
 
 enum PLAYER_STATE {
 	default = 0,
 	jump = 1,
 	death_anim = 2,
 	killed = 3,
-	finish
+	finish_line = 4,
+	end_of_level = 5
 }
 
 onready var wheel_front = get_node("WheelFront")
@@ -36,7 +38,7 @@ onready var gun = get_node("Gun")
 var player_state = PLAYER_STATE.default
 var cur_velocity = Vector2()
 var jump_slowdown_factor = 0
-
+var post_finish_line_delay_counter = 0
 
 func _ready():
 	set_fixed_process(true)
@@ -45,6 +47,7 @@ func _ready():
 
 func activate():
 	player_state = PLAYER_STATE.default
+	get_node("Camera2D").make_current()
 	get_node("Sprite").show()
 	gun.reset()
 	for wheel in wheels_array:
@@ -53,8 +56,12 @@ func activate():
 	cur_velocity = Vector2(DEFAULT_SPEED, 0)
 
 func _fixed_process(delta):
-	if player_state == PLAYER_STATE.death_anim or player_state == PLAYER_STATE.finish:
+	if player_state == PLAYER_STATE.death_anim or player_state == PLAYER_STATE.end_of_level:
 		return
+	if player_state == PLAYER_STATE.finish_line:
+		post_finish_line_delay_counter += delta
+		if post_finish_line_delay_counter > POST_FINISH_LINE_DELAY:
+			player_state = PLAYER_STATE.end_of_level
 	if player_state == PLAYER_STATE.jump:
 		update_jump(delta)
 	else:
@@ -153,10 +160,10 @@ func _on_Player_body_enter(body):
 		# player died by hitting a 'death' tile
 		kill()
 	elif groups.has("finish"):
-		# player reached the level's finish line
-		for wheel in wheels_array:
-			wheel.set_rotation_speed(0)
-		player_state = PLAYER_STATE.finish
+		# player touched the 'finish' area, clear camera so the player will disappear to the right
+		get_node("Camera2D").clear_current()
+		player_state = PLAYER_STATE.finish_line
+		post_finish_line_delay_counter = 0
 
 func _on_DeathAnimation_finished():
 	death_anim.hide()
@@ -165,7 +172,8 @@ func _on_DeathAnimation_finished():
 func is_killed():
 	return player_state == PLAYER_STATE.killed
 
-
+func is_reached_end_of_level():
+	return player_state == PLAYER_STATE.end_of_level
 
 func _on_Player_area_enter( area ):
 	pass # replace with function body
