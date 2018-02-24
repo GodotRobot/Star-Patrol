@@ -17,6 +17,9 @@ const ROT_RESET_SPEED = 3
 const VEHICLE_TO_WHEEL_OFFSET = 20
 # once the player hit the finish line, allow it to advance for this amount of time (sec) until the level is finished
 const POST_FINISH_LINE_DELAY = 4
+# delay between bullets fire in seconds
+const BULLET_RECOVERY_DELAY_MSEC = 200
+const BULLET_SPEED = 700
 
 enum PLAYER_STATE {
 	default = 0,        # default player state, moving to the right
@@ -26,6 +29,8 @@ enum PLAYER_STATE {
 	finish_line = 4,    # player reached the finish line, used to mark the end of the level
 	end_of_level = 5    # player moved beyond the right side of the screen after crossing the finish line
 }
+
+onready var bullet = preload("res://entities/bullets/player_bullet.tscn")
 
 onready var wheel_front = get_node("WheelFront")
 onready var wheel_center = get_node("WheelCenter")
@@ -39,6 +44,7 @@ var player_state = PLAYER_STATE.default
 var cur_velocity = Vector2()
 var jump_slowdown_factor = 0
 var post_finish_line_delay_counter = 0
+var bullet_last_timestamp = 0
 
 func _ready():
 	set_fixed_process(true)
@@ -69,6 +75,8 @@ func _fixed_process(delta):
 			cur_velocity.x -= ACCELERATION
 		if Input.is_action_pressed("ui_accept") and is_jump_allowed():
 			jump()
+		if Input.is_action_pressed("fire") and is_fire_allowed():
+			fire()
 	
 	if Input.is_action_pressed("ui_up"):
 		gun.raise()
@@ -176,6 +184,25 @@ func _on_Player_body_enter(body):
 		player_state = PLAYER_STATE.finish_line
 		post_finish_line_delay_counter = 0
 
+func fire():
+	bullet_last_timestamp = OS.get_ticks_msec()
+	var new_bullet = bullet.instance()
+	var position = Vector2() 
+	position =  get_global_pos() + gun.get_offset()
+	var velocity = Vector2()
+	if gun.is_raised():
+		# keep the bullet moving with the player along the x axis when the gun is raised
+		velocity = Vector2(cur_velocity.x, -BULLET_SPEED)
+	else:
+		velocity = Vector2(BULLET_SPEED, 0)
+	new_bullet.init(position, velocity)
+	get_parent().add_child(new_bullet)
+
+func is_fire_allowed():
+	# player can fire a bullet if the gun is not mid-animation and enough time passed since the last bullet was fired
+	var cur_timestamp = OS.get_ticks_msec()
+	return gun.is_animation_finished() and cur_timestamp - bullet_last_timestamp > BULLET_RECOVERY_DELAY_MSEC
+
 func _on_DeathAnimation_finished():
 	death_anim.hide()
 	player_state = PLAYER_STATE.killed
@@ -185,6 +212,3 @@ func is_killed():
 
 func is_reached_end_of_level():
 	return player_state == PLAYER_STATE.end_of_level
-
-func _on_Player_area_enter( area ):
-	pass # replace with function body
