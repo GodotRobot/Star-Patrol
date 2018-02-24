@@ -17,7 +17,7 @@ func lower():
 		is_raised = false
 
 func reset():
-	# reset raise gun animation
+	# reset raised gun animation
 	gun_animation.seek(0, true)
 	is_raised = false
 	show()

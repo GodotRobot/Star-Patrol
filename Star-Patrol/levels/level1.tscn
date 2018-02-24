@@ -31,7 +31,7 @@ tile_data = IntArray( 5243228, 0, 5243819, 0, 5308539, 1, 5308540, 1, 5308541, 1
 
 [node name="FinishLine" parent="."]
 
-transform/pos = Vector2( 9103.06, 480.104 )
+transform/pos = Vector2( 9156.06, 452.209 )
 
 [node name="Enemy1" parent="." instance=ExtResource( 4 )]
 

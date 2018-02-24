@@ -19,12 +19,12 @@ const VEHICLE_TO_WHEEL_OFFSET = 20
 const POST_FINISH_LINE_DELAY = 4
 
 enum PLAYER_STATE {
-	default = 0,
-	jump = 1,
-	death_anim = 2,
-	killed = 3,
-	finish_line = 4,
-	end_of_level = 5
+	default = 0,        # default player state, moving to the right
+	jump = 1,           # player is currently jumping
+	death_anim = 2,     # player hit a 'death' tile and death animation is running
+	killed = 3,         # death animation is over, player is dead
+	finish_line = 4,    # player reached the finish line, used to mark the end of the level
+	end_of_level = 5    # player moved beyond the right side of the screen after crossing the finish line
 }
 
 onready var wheel_front = get_node("WheelFront")
@@ -59,9 +59,7 @@ func _fixed_process(delta):
 	if player_state == PLAYER_STATE.death_anim or player_state == PLAYER_STATE.end_of_level:
 		return
 	if player_state == PLAYER_STATE.finish_line:
-		post_finish_line_delay_counter += delta
-		if post_finish_line_delay_counter > POST_FINISH_LINE_DELAY:
-			player_state = PLAYER_STATE.end_of_level
+		update_finish_line(delta)
 	if player_state == PLAYER_STATE.jump:
 		update_jump(delta)
 	else:
@@ -83,6 +81,15 @@ func _fixed_process(delta):
 	
 	update_wheels() # update wheels rotation speed and position
 	update_vehicle(delta) # move the vehicle and keep the vehicle above the wheels
+
+func update_finish_line(delta):
+	# count the time to the end of the level passed the finish line
+	post_finish_line_delay_counter += delta
+	if post_finish_line_delay_counter > POST_FINISH_LINE_DELAY:
+		player_state = PLAYER_STATE.end_of_level
+	# if player reached the finish line mid-jump, continue updating the jump back down
+	if not is_touching_ground():
+		update_jump(delta)
 
 func is_jump_allowed():
 	return player_state == PLAYER_STATE.default
@@ -155,6 +162,10 @@ func kill():
 	death_anim.play("Death")
 
 func _on_Player_body_enter(body):
+	# if the player is passed the finish line, ignore collision with death tiles
+	if player_state == PLAYER_STATE.finish_line:
+		return
+	
 	var groups = body.get_groups()
 	if groups.has("death"):
 		# player died by hitting a 'death' tile

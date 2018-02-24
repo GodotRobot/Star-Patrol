@@ -8,7 +8,8 @@
 [ext_resource path="res://art/backgrounds/background1.tex" type="Texture" id=6]
 [ext_resource path="res://art/backgrounds/background2.tex" type="Texture" id=7]
 [ext_resource path="res://entities/player/player.tscn" type="PackedScene" id=8]
-[ext_resource path="res://entities/level/FinishLine.tscn" type="PackedScene" id=9]
+[ext_resource path="res://entities/level/finish_line.tscn" type="PackedScene" id=9]
+
 
 [node name="Root" type="Node2D"]
 
