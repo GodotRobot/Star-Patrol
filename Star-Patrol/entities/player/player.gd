@@ -75,7 +75,8 @@ func _fixed_process(delta):
 			cur_velocity.x -= ACCELERATION
 		if Input.is_action_pressed("ui_accept") and is_jump_allowed():
 			jump()
-		if Input.is_action_pressed("fire") and is_fire_allowed():
+
+	if Input.is_action_pressed("fire") and is_fire_allowed():
 			fire()
 	
 	if Input.is_action_pressed("ui_up"):
