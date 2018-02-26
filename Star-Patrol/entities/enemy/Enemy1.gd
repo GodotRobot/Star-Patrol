@@ -1,11 +1,31 @@
 extends Area2D
 
+onready var sprite = get_node("Sprite")
+
 var activated = false
 const SPEED = 50.0
 var course = 0
 var course_dir
 
+func disable():
+	sprite.hide()
+	set_collision_mask(0)
+	set_layer_mask(0)
+	
+func enable():
+	sprite.show()
+	set_collision_mask(1)
+	set_layer_mask(1)
+	# enter from behind
+	#var player = GameManager.current_player
+	#if player:
+	#	var cam = player.get_node("Camera2D")
+	#	if cam:
+	#		var vp = cam.get_custom_viewport()
+	#		set_pos(Vector2(player.get_pos().x, get_pos().y))
+	
 func _ready():
+	disable()
 	set_fixed_process(true)
 
 func activate():
@@ -14,10 +34,10 @@ func activate():
 	var player = GameManager.current_player
 	if !player:
 		return
-	var player_dist = get_pos().x - player.get_pos().x
-	if player_dist < 800:
+	if get_pos().x < player.get_pos().x:
 		print("enemy1 activated!")
 		activated = true
+		enable()
 
 func update_flight(delta):
 	if course == 0:
