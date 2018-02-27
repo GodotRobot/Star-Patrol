@@ -213,3 +213,6 @@ func is_killed():
 
 func is_reached_end_of_level():
 	return player_state == PLAYER_STATE.end_of_level
+
+func _on_Player_area_enter(area):
+	pass

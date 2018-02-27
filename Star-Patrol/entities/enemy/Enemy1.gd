@@ -14,7 +14,7 @@ func disable():
 	
 func enable():
 	sprite.show()
-	set_collision_mask(1)
+	set_collision_mask(2)
 	set_layer_mask(1)
 	# enter from behind
 	#var player = GameManager.current_player
@@ -52,3 +52,9 @@ func _fixed_process(delta):
 	if !activated:
 		return
 	update_flight(delta)
+
+
+func _on_Enemy1_area_enter(area):
+	var groups = area.get_groups()
+	if groups.has("player_bullet"):
+		print("collision with bullet")
