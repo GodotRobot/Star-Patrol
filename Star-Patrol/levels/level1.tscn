@@ -35,7 +35,7 @@ transform/pos = Vector2( 9156.06, 452.209 )
 
 [node name="Enemy1" parent="." instance=ExtResource( 4 )]
 
-transform/pos = Vector2( 1457.37, 174.542 )
+transform/pos = Vector2( 1377.2, 202.935 )
 
 [node name="Enemy5" parent="." instance=ExtResource( 4 )]
 
