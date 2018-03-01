@@ -16,8 +16,8 @@ func enable():
 	sprite.show()
 	set_collision_mask(2)
 	set_layer_mask(1)
-	# enter from behind
-	#var player = GameManager.current_player
+	# enter from behind, same height (y)
+	
 	#if player:
 	#	var cam = player.get_node("Camera2D")
 	#	if cam:
