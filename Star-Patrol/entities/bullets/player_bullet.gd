@@ -16,7 +16,7 @@ func _fixed_process(delta):
 	bullet_cur_distance += bullet_velocity.length() * delta
 	if bullet_cur_distance > bullet_max_distance:
 		# max distance reached, end bullet
-		queue_free()
+		disable()
 
 
 func init(global_pos, velocity, distance = 0):
@@ -25,3 +25,7 @@ func init(global_pos, velocity, distance = 0):
 		bullet_max_distance = distance
 	bullet_cur_distance = 0
 	set_global_pos(global_pos)
+
+func disable():
+	hide()
+	queue_free()
