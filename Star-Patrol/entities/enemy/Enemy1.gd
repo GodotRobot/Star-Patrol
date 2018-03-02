@@ -87,7 +87,7 @@ func update_flight(delta):
 func _on_Enemy1_area_enter(area):
 	var groups = area.get_groups()
 	if groups.has("player_bullet"):
-		# enemy hit by a player buller, remove the bullet and start the 'hit' sequence
+		# enemy hit by a player bullet, remove the bullet and start the 'hit' sequence
 		area.disable()
 		on_enemy_hit()
 
@@ -99,11 +99,10 @@ func on_enemy_hit():
 	set_collision_mask(0)
 
 func _on_AnimatedSprite_frame_changed():
-	# the death animation has 2 parts, hide the enemy after the 'hit' last frame when the explosion starts
+	# the death animation has 2 parts, hide the enemy when the explosion part of the animation starts
 	if animated_sprite.is_playing() and animated_sprite.get_frame() == EXPLOSION_START_FRAME_NUM:
 		sprite.hide()
 
 func _on_AnimatedSprite_finished():
-	# enemy is killed
-	animated_sprite.hide()
+	# enemy death animation is finished
 	disable()
