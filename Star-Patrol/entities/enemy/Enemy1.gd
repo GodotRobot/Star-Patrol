@@ -34,10 +34,10 @@ func enable():
 	var r = original_global_transform.o
 	var vps = get_viewport_rect().size
 	set_pos(Vector2(r.x-vps.x/2, get_pos().y))
-	print("setting position for " + get_name() + " " + String(get_pos()))
 	dir = Vector2(SPEED * 20.0, 1.0)
 	sprite.show()
 	enemy_state = ENEMY_STATE.active
+	print("activating enemy1: " + get_name())
 	
 func _ready():
 	original_global_transform = get_global_transform()
