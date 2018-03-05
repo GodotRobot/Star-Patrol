@@ -1,7 +1,11 @@
 extends Area2D
 
+export (bool) var hole_bullet = false
+
 onready var sprite = get_node("Sprite")
 onready var animated_sprite = get_node("AnimatedSprite")
+
+onready var hole_bullet_scene = preload("res://entities/bullets/hole_bullet.tscn")
 
 const SPEED = 30.0 # movement speed
 const MAX_DIST = 700.0 # follow the player for this maximum distance before leaving / kamikazing
@@ -18,6 +22,7 @@ enum ENEMY_STATE {
 var enemy_state = ENEMY_STATE.disabled
 var dir = Vector2()
 var original_global_transform = Matrix32()
+var hole_bullet_fired = false
 
 func disable():
 	sprite.hide()
@@ -49,7 +54,7 @@ func is_flight_finished():
 		var vps = get_viewport_rect().size
 		var player = GameManager.current_player
 		# check if the enemy is gone to the right side of the viewport
-		if get_pos().x > player.get_pos().x + (vps.x/2) + sprite.get_texture().get_width():
+		if get_pos().x > player.get_pos().x + vps.x:
 			return true
 	return false
 
@@ -68,10 +73,31 @@ func update_state():
 	elif enemy_state == ENEMY_STATE.ready and get_pos().x < player.get_pos().x:
 		enable()
 
+func is_hole_bullet_ready():
+	if enemy_state != ENEMY_STATE.active or hole_bullet_fired:
+		return false
+
+	var player = GameManager.current_player
+	var vps = get_viewport_rect().size
+	# check if the enemy is close enough to the right side of the viewport
+	if get_pos().x > player.get_pos().x + (vps.x/2) - 200:
+		return true
+	return false
+
+func fire_hole_bullet():
+	var hole_bullet = hole_bullet_scene.instance()
+	var player = GameManager.current_player
+	hole_bullet.set_velocity(-player.get_cur_velocity().x, 300)
+	add_child(hole_bullet)
+	hole_bullet_fired = true
+
 func _fixed_process(delta):
 	update_state()
 	if enemy_state == ENEMY_STATE.active:
 		update_flight(delta)
+	
+	if hole_bullet and is_hole_bullet_ready():
+		fire_hole_bullet()
 
 func update_flight(delta):
 	# do a figure of 8	

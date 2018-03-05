@@ -10,9 +10,7 @@ func _ready():
 	set_fixed_process(true)
 
 func _fixed_process(delta):
-	var cur_pos = get_pos()
-	cur_pos += bullet_velocity * delta
-	set_pos(cur_pos)
+	translate(bullet_velocity * delta)
 	bullet_cur_distance += bullet_velocity.length() * delta
 	if bullet_cur_distance > bullet_max_distance:
 		# max distance reached, end bullet
